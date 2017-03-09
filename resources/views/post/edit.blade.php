@@ -3,14 +3,14 @@
 @section('content')
 
 <div class="row">
-    <form class="form-horizontal" action="{{url('post') . '/' . $post->id}}" method="post">
+    <form class="form-horizontal" action="{{route('post.update', ['post' => $post->id])}}" method="post">
         {{csrf_field()}}
         <input type="hidden" name="_method" value="PUT">
 
         <div class="form-group">
             <label for="title" class="control-label col-md-2">Title</label>
             <div class="col-md-10">
-                <input id="title" type="text" name="title" class="form-control" maxlength="255" placeholder="Title of post" required value="{{$post->title}}">
+                <input id="title" type="text" name="title" class="form-control" maxlength="250" placeholder="Title of post" required value="{{$post->title}}">
             </div>
         </div>
         <div class="form-group">
@@ -26,7 +26,7 @@
         <div class="form-group">
             <label for="body" class="control-label col-md-2">Body</label>
             <div class="col-md-10">
-                <textarea id="body" rows="10" name="body" class="form-control" maxlength="65535">{{$post->body}}</textarea>
+                <textarea id="body" rows="10" name="body" class="form-control" maxlength="65000">{{$post->body}}</textarea>
             </div>
         </div>
         <div class="form-group">

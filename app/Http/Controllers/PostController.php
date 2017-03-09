@@ -89,4 +89,25 @@ class PostController extends Controller
         return view('post/edit')->withPost($post);
     }
 
+    public function update(Request $request, $id)
+    {
+        $user = Auth::user();
+        $post = Post::find($id);
+        if($user->isInRole('admin') || $user->id === $post->user_id){
+            $this->validate($request, [
+                'title' => 'required|max:255',
+                'type' => 'required|in:1,2,3',
+                'body' => 'required|max:65000',
+                'is_open' => 'required|in:0,1',
+            ]);
+            $post->title = $request->title;
+            $post->type = $request->type;
+            $post->body = $request->body;
+            $post->is_open = $request->is_open;
+
+            $post->save();
+            return redirect()->route('post.show', ['post' => $id]);
+        }
+        return response()->json(["status"=>"Unauthorized"], 403);
+    }
 }

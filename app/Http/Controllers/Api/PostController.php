@@ -63,7 +63,7 @@ class PostController extends Controller
     {
         $user = $reuqest->user();
         $post = Post::find($id);
-        if(Auth::user()->isInRole('admin') || $user->id === $post->user_id){
+        if($user->isInRole('admin') || $user->id === $post->user_id){
             $this->validate($request, [
                 'title' => 'required|max:255',
                 'type' => 'required|in:1,2,3',

@@ -16,11 +16,19 @@ use Illuminate\Http\Request;
 Route::get('post/type/{type}', 'PostController@byType');
 Route::get('post/{id}', 'PostController@byId');
 Route::post('response', 'ResponseController@store');
+Route::get('loggedUser', function ()
+{
+    return response()->json(Auth::user());
+});
 
 Route::group(['middleware' => 'jwt.auth'], function ()
 {
     Route::get('/user', function (Request $request) {
         return $request->user();
+    });
+
+    Route::get('/roles', function (Request $request) {
+        return $request->user()->roles;
     });
 
     Route::get('year', 'YearController@index');
