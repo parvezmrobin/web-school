@@ -26,3 +26,7 @@ Route::get('/api/token', function ()
 Route::get('/home', 'HomeController@index');
 
 Route::resource('post', 'PostController');
+Route::get('application', function ()
+{
+    return view('application/index');
+});

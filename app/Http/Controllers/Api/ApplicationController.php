@@ -13,7 +13,7 @@ class ApplicationController extends Controller
     {
         $forStudent = $request->input('for_student');
         $cond = [['deadline', '>=', new Carbon]];
-        if ($forStudent) {
+        if ($forStudent !==null) {
             array_push($cond, ['for_student', $forStudent]);
         }
         $apps = Application::where($cond)->latest()->get();
@@ -24,7 +24,7 @@ class ApplicationController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        if($user->isInRole(['admin', 'editor']) {
+        if($user->isInRole(['admin', 'editor'])) {
             $this->validate($request, [
                 'title' => 'bail|required|max:250',
                 'detail' => 'bail|required|max:65500',
@@ -43,8 +43,9 @@ class ApplicationController extends Controller
             $app->notice = $request->input('notice');
             $app->deadline = $request->input('deadline');
             $app->save();
-            return response->json($app);
+            return response()->json($app);
         }
+
     }
 
     public function update(Request $request, $id)
@@ -60,7 +61,7 @@ class ApplicationController extends Controller
             $app->notice = $request->input('notice');
             $app->deadline = $request->input('deadline');
             $app->save();
-            return response->json($app);
+            return response()->json($app);
         }
 
         return response()->json(["status"=>"Unauthorized"], 403);

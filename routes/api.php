@@ -15,6 +15,10 @@ use Illuminate\Http\Request;
 
 Route::get('post/type/{type}', 'PostController@byType');
 Route::get('post/{id}', 'PostController@byId');
+
+Route::get('app', 'ApplicationController@index');
+Route::post('app', 'ApplicationController@store');
+
 Route::post('response', 'ResponseController@store');
 Route::get('loggedUser', function ()
 {
@@ -46,4 +50,6 @@ Route::group(['middleware' => 'jwt.auth'], function ()
     Route::put('section/{id}', 'SectionController@update');
     Route::delete('section/{id}', 'SectionController@destroy');
 
+    Route::put('app/{id}', 'ApplicationController@update');
+    Route::delete('app/{id}', 'ApplicationController@delete');
 });
