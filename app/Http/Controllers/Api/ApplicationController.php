@@ -13,8 +13,8 @@ class ApplicationController extends Controller
     {
         $forStudent = $request->input('for_student');
         $cond = [['deadline', '>=', new Carbon]];
-        if ($forStudent !==null) {
-            array_push($cond, ['for_student', $forStudent]);
+        if ($forStudent !== null) {
+            $cond = array_push($cond, ['for_student', $forStudent]);
         }
         $apps = Application::where($cond)->latest()->get();
 
@@ -45,7 +45,7 @@ class ApplicationController extends Controller
             $app->save();
             return response()->json($app);
         }
-
+        return response()->json(["status"=>"Unauthorized"], 403);
     }
 
     public function update(Request $request, $id)
@@ -54,12 +54,12 @@ class ApplicationController extends Controller
         $app = Application::find($id);
 
         if($user->isInRole('admin') || $user->id === $app->user_id){
-            $app->title = $request->input('title');
-            $app->detail = $request->input('detail');
-            $app->for_student = $request->input('for_student');
-            $app->info = $request->input('info');
-            $app->notice = $request->input('notice');
-            $app->deadline = $request->input('deadline');
+            if($request->input('title')){$app->title = $request->input('title');}
+            if($request->input('detail')){$app->detail = $request->input('detail');}
+            if($request->input('for_student')){$app->for_student = $request->input('for_student');}
+            if($request->input('info')){$app->info = $request->input('info');}
+            if($request->input('notice')){$app->notice = $request->input('notice');}
+            if($request->input('deadline')){$app->deadline = $request->input('deadline');}
             $app->save();
             return response()->json($app);
         }

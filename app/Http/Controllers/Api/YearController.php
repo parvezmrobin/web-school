@@ -24,16 +24,6 @@ class YearController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -44,34 +34,13 @@ class YearController extends Controller
         $user = $request->user();
         if($user->isInRole('admin')){
             $year = new Year;
-            $year->year = $request->input('year');
+            if($request->input('year')){$year->year = $request->input('year');}
             $year->save();
             return response()->json($year);
         }
         return response()->json(["status"=>"Unauthorized"], 403);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Year  $year
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Year $year)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Year  $year
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Year $year)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

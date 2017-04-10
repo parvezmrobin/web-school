@@ -25,7 +25,10 @@ class SubjectTeacherController extends Controller
             $conds['class_section_year_id'] = $request->input('csy');
         }
 
-        $res = DB::table($table)->where($conds)->get();
+        $res = DB::table($table)
+        ->join('subjects', 'subject_id', 'subjects.id')
+        ->select('subject_teacher.*', 'subjects.subject_code', 'subjects.subject', 'subjects.mark')
+        ->where($conds)->get();
 
         return response()->json($res);;
     }

@@ -39,7 +39,7 @@ class TermController extends Controller
 
                 ]);
             $term = Term::find($id);
-            $term->term = $request->input('term');
+            if($request->input('term')){$term->term = $request->input('term');}
             $term->save();
             return response()->json($term);
         }

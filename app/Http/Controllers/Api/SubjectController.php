@@ -18,13 +18,13 @@ class SubjectController extends Controller
         $user = $request->user();
         if($user->isInRole('admin')){
             $this->validate($request, [
-                'subject_code' => 'bail|required|max:16',
+                'code' => 'bail|required|max:16',
                 'subject' => 'bail|required|max:64',
                 'mark' => 'bail|required|numeric',
                 ]);
 
             $sub = new Subject;
-            $sub->subject_code = $request->input('subject_code');
+            $sub->subject_code = $request->input('code');
             $sub->subject = $request->input('subject');
             $sub->mark = $request->input('mark');
             $sub->save();
@@ -39,15 +39,15 @@ class SubjectController extends Controller
         $user = $request->user();
         if($user->isInRole('admin')){
             $this->validate($request, [
-                'subject_code' => 'bail|required|max:16',
-                'subject' => 'bail|required|max:64',
-                'mark' => 'bail|required|numeric',
+                'code' => 'bail|max:16',
+                'subject' => 'bail|max:64',
+                'mark' => 'bail|numeric',
                 ]);
 
             $sub = Subject::find($id);
-            $sub->subject_code = $request->input('subject_code');
-            $sub->subject = $request->input('subject');
-            $sub->mark = $request->input('mark');
+            if($request->input('code')){$sub->subject_code = $request->input('code');}
+            if($request->input('subject')){$sub->subject = $request->input('subject');}
+            if($request->input('mark')){$sub->mark = $request->input('mark');}
             $sub->save();
 
             return response()->json($sub);

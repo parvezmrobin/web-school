@@ -16,19 +16,7 @@ class SectionController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->user()->isInRole('admin')){
-            return response()->json(Section::all());
-        }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
+        return response()->json(Section::all());
     }
 
     /**
@@ -49,28 +37,6 @@ class SectionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Section  $section
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Section $section)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Section  $section
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Section $section)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -81,7 +47,7 @@ class SectionController extends Controller
     {
         if($request->user()->isInRole('admin')){
             $sec = Section::find($id);
-            $sec->section = $request->input('section');
+            if($request->input('section')){$sec->section = $request->input('section');}
             $sec->save();
             return response()->json($sec);;
         }

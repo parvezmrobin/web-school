@@ -33,19 +33,19 @@ class User extends Authenticatable
         $roles = [];
 
         if (Student::find($this->id)) {
-            array_push($roles, 'Student');
+            $roles = array_push($roles, 'Student');
         }
 
         if (Teacher::find($this->id)) {
-            array_push($roles, 'Teacher');
+            $roles = array_push($roles, 'Teacher');
         }
 
         if (Editor::find($this->id)) {
-            array_push($roles, 'Editor');
+            $roles = array_push($roles, 'Editor');
         }
 
         if (Admin::find($this->id)) {
-            array_push($roles, 'Admin');
+            $roles = array_push($roles, 'Admin');
         }
 
         return $roles;

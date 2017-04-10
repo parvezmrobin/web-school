@@ -23,7 +23,14 @@ class ClassSectionYearController extends Controller
             $conds['section_id'] = $request->input('section');
         }
 
-        $res = DB::table('class_section_year')->where($conds)->orderBy('year_id')->get();
+        $res = DB::table('class_section_year')
+        ->join('classes', 'class_id', 'classes.id')
+        ->join('sections', 'section_id', 'sections.id')
+        ->join('years', 'year_id', 'years.id')
+        ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'class_section_year.id')
+        ->where($conds)
+        ->orderByRaw('year_id, class_id, section_id')
+        ->get();
         return response()->json($res);
     }
 
@@ -44,7 +51,13 @@ class ClassSectionYearController extends Controller
 
             $vals = array_merge($vals, ['created_at' => new Carbon, 'updated_at' => new Carbon]);
             $id = DB::table('class_section_year')->insertGetId($vals);
-            return response()->json(DB::table('class_section_year')->where('id', $id)->first());
+            $res = DB::table('class_section_year')
+            ->join('classes', 'class_id', 'classes.id')
+            ->join('sections', 'section_id', 'sections.id')
+            ->join('years', 'year_id', 'years.id')
+            ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'class_section_year.id')
+            ->where('id', $id)->first();
+            return response()->json($res);
         }
         return response()->json(["status"=>"Unauthorized"], 403);
     }
@@ -65,13 +78,18 @@ class ClassSectionYearController extends Controller
             }
 
             DB::table('class_section_year')->where('id', $id)->update($conds);
-            $res = DB::table('class_section_year')->where('id', $id)->first();
+            $res = DB::table('class_section_year')
+            ->join('classes', 'class_id', 'classes.id')
+            ->join('sections', 'section_id', 'sections.id')
+            ->join('years', 'year_id', 'years.id')
+            ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'class_section_year.id')
+            ->where('id', $id)->first();
             return response()->json($res);
         }
         return response()->json(["status"=>"Unauthorized"], 403);
     }
 
-    public function controller(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         $user = $request->user();
         if($user->isInRole('admin')){

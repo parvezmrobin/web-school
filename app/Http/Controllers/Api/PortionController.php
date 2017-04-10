@@ -40,7 +40,7 @@ class PortionController extends Controller
                 ]);
 
             $portion = Portion::find($id);
-            $portion->portion = $request->input('portion');
+            if($request->input('portion')){$portion->portion = $request->input('portion');}
             $portion->save();
 
             return response()->json($portion);

@@ -21,7 +21,13 @@ class ClassSectionYearTermController extends Controller
             $cond['term_id'] = $request->input('term');
         }
 
-        $res = DB::table($table)->where($conds)->orderBy('term_id')->get();
+        $res = DB::table($table)
+        ->join('classes', 'class_id', 'classes.id')
+        ->join('sections', 'section_id', 'sections.id')
+        ->join('years', 'year_id', 'years.id')
+        ->join('terms', 'term_id', 'terms.id')
+        ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'term_id', 'term', 'class_section_year_term.id')
+        ->where($conds)->orderByRaw('year_id, class_id, section_id, term_id')->get();
         return response()->json($res);
     }
 
@@ -36,7 +42,13 @@ class ClassSectionYearTermController extends Controller
                 'updated_at' => new Carbon,
             ];
             $id = DB::table($table)->insertGetId($vals);
-            $res = DB::table($table)->where('id', $id);
+            $res = DB::table($table)
+            ->join('classes', 'class_id', 'classes.id')
+            ->join('sections', 'section_id', 'sections.id')
+            ->join('years', 'year_id', 'years.id')
+            ->join('terms', 'term_id', 'terms.id')
+            ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'term_id', 'term', 'class_section_year_term.id')
+            ->where('id', $id)->orderByRaw('year_id, class_id, section_id, term_id')->first();
             return response()->json($res);
         }
         return response()->json(["status"=>"Unauthorized"], 403);
@@ -54,9 +66,15 @@ class ClassSectionYearTermController extends Controller
             if ($request->input('term')) {
                 $cond['term_id'] = $request->input('term');
             }
-            
+
             DB::table($table)->where('id', $id)->update($conds);
-            $res = DB::table($table)->where('id', $id)->first();
+            $res = DB::table($table)
+            ->join('classes', 'class_id', 'classes.id')
+            ->join('sections', 'section_id', 'sections.id')
+            ->join('years', 'year_id', 'years.id')
+            ->join('terms', 'term_id', 'terms.id')
+            ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'term_id', 'term', 'class_section_year_term.id')
+            ->where('id', $id)->orderByRaw('year_id, class_id, section_id, term_id')->first();
             return response()->json($res);
         }
         return response()->json(["status"=>"Unauthorized"], 403);

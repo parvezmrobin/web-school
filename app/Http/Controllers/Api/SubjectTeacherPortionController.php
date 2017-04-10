@@ -20,7 +20,10 @@ class SubjectTeacherPortionController extends Controller
             $conds['portion_id'] = $request->input('portion');
         }
 
-        $res = DB::table($table)->where($conds)->get();
+        $res = DB::table($table)
+        ->join('portions', 'portions.id', 'portion_id')
+        ->select($table . '.id', 'portions.portion')
+        ->where($conds)->get();
         return response()->json($res);
     }
 

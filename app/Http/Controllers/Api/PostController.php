@@ -32,7 +32,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        if($user->isInRole('admin') || $user->isInRole('editor')){
+        if($user->isInRole(['admin', 'editor'])){
             $this->validate($request, [
                 'title' => 'required|max:255',
                 'type' => 'required|in:1,2,3',
@@ -70,10 +70,10 @@ class PostController extends Controller
                 'body' => 'required|max:65000',
                 'is_open' => 'required|in:0,1',
             ]);
-            $post->title = $request->title;
-            $post->type = $request->type;
-            $post->body = $request->body;
-            $post->is_open = $request->is_open;
+            if($request->title){$post->title = $request->title;}
+            if($request->type){$post->type = $request->type;}
+            if($request->body){$post->body = $request->body;}
+            if( $request->is_open){$post->is_open = $request->is_open;}
 
             $post->save();
             return response()->json($post);
