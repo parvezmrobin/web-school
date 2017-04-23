@@ -10,6 +10,18 @@
       background-color: skyblue;
       color: white;
     }
+
+    .form-control, .btn{
+        max-width: 280px;
+        border-radius: 1px;
+    }
+
+    .btn{
+        background: transparent;
+        font-weight: bold;
+        color: #103771;
+        min-width: 100px;
+    }
   </style>
 @endsection
 
@@ -46,7 +58,7 @@
         </div>
 
         <div class="form-group">
-          <button type="button" class="btn btn-default" @click="loadMarks">
+          <button type="button" class="btn btn-primary" @click="loadMarks">
             Load
           </button>
         </div>

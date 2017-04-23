@@ -6,8 +6,16 @@
 .form-control{
     max-width: 280px;
     background: rgba(255, 255, 255, .7);
+    border-radius: 1px;
 }
 .panel{
+    border: none;
+}
+.btn-danger{
+    background-color: transparent;
+    color: crimson;
+    border-radius: 1px;
+    width: 100%;
     border: none;
 }
 </style>
@@ -55,7 +63,7 @@
                 <h2 class="panel-heading text-center">Summary</h2>
                 <div class="panel-body">
                     <table class="table table-striped">
-                        <thead>
+                        <thead class="bg-primary">
                             <th>Term</th>
                             <th>Percentage</th>
                             <th></th>
@@ -65,7 +73,7 @@
                                 <td>@{{term.term}}</td>
                                 <td>@{{term.percentage}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-danger" @click="removeTerm(term.id)">
+                                    <button :title="'Remove ' + term.term" type="button" class="btn btn-sm btn-danger" @click="removeTerm(term.id)">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </button>
                                 </td>

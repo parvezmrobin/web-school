@@ -30,9 +30,14 @@ class SubjectTeacherController extends Controller
         }
         if ($request->input('csy')){
             array_push($conds, ['class_section_year_id',$request->input('csy')]);
-        } else{
+        }
+        if ($request->input('cid')){
             array_push($conds, ['class_id',$request->input('cid')]);
+        }
+        if ($request->input('sid')){
             array_push($conds, ['section_id',$request->input('sid')]);
+        }
+        if ($request->input('yid')){
             array_push($conds, ['year_id',$request->input('yid')]);
         }
 
