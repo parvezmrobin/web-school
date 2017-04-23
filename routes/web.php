@@ -41,6 +41,11 @@ Route::get('admin/auth', function ()
     return view('admin.auth');
 });
 
+Route::get('admin/term', function ()
+{
+    return view('admin.term');
+});
+
 Route::get('common/portion', function ()
 {
   return view('common.subject-portion');

@@ -58,7 +58,7 @@ Route::group(['middleware' => 'jwt.auth'], function ()
   Route::get('csyt', 'ClassSectionYearTermController@index');
   Route::post('csyt', 'ClassSectionYearTermController@store');
   Route::put('csyt/{id}', 'ClassSectionYearTermController@update');
-  Route::delete('csyt/{id}', 'ClassSectionYearTermController@delete');
+  Route::post('csyt/delete', 'ClassSectionYearTermController@delete');
 
   Route::get('portion', 'PortionController@index');
   Route::post('portion', 'PortionController@store');
