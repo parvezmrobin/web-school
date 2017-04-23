@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Term;
+use App\Subject;
 
 class SubjectController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(Subject::all());
+      $user = $request->user();
+      if (!$user->isInRole(['admin', 'editor', 'teacher'])) {
+        return response()->json(["status"=>"Unauthorized"], 403);
+      }
+
+      return response()->json(Subject::all());
     }
 
     public function store(Request $request)

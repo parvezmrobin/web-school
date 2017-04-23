@@ -14,7 +14,7 @@ class ApplicationController extends Controller
         $forStudent = $request->input('for_student');
         $cond = [['deadline', '>=', new Carbon]];
         if ($forStudent !== null) {
-            $cond = array_push($cond, ['for_student', $forStudent]);
+            array_push($cond, ['for_student', $forStudent]);
         }
         $apps = Application::where($cond)->latest()->get();
 

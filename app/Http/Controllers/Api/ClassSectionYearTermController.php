@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use DB;
 
 class ClassSectionYearTermController extends Controller
 {
@@ -21,7 +22,8 @@ class ClassSectionYearTermController extends Controller
             $cond['term_id'] = $request->input('term');
         }
 
-        $res = DB::table($table)
+        $res = DB::table($this->table)
+        ->join('class_section_year', 'class_section_year_id', 'class_section_year.id')
         ->join('classes', 'class_id', 'classes.id')
         ->join('sections', 'section_id', 'sections.id')
         ->join('years', 'year_id', 'years.id')

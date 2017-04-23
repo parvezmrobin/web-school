@@ -7,23 +7,35 @@ use App\Http\Controllers\Controller;
 
 class StudentRollController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = $request->user();
         if($user->isInRole(['admin', 'editor', 'teacher', 'student'])){
-            $conds = [];
+            $conds = [['student_id', $user->id]];
             if ($request->input('class')) {
-                $conds = array_push($conds, ['class_id', $request->input('class')]);
+              array_push($conds, ['class_id', $request->input('class')]);
             }
             if ($request->input('csy')) {
-                $conds = array_push($conds, ['class_section_year_id', $request->input('csy')]);
+                array_push($conds, ['class_section_year_id', $request->input('csy')]);
             }
             if ($request->input('year')) {
-                $conds = array_push($conds, ['year_id', $request->input('year')]);
+                array_push($conds, ['year_id', $request->input('year')]);
             }
             $res = \App\StudentRoll::join('class_section_year', 'class_section_year.id', 'class_section_year_id')
+            ->join('classes', 'class_id', 'classes.id')
+            ->join('sections', 'section_id', 'sections.id')
+            ->join('years', 'year_id', 'years.id')
             ->where($conds)
-            ->select('student_roll.*')
+            ->select([
+              'student_roll.*',
+              'class_id',
+              'class',
+              'section_id',
+              'section',
+              'year_id',
+              'year',
+              'class_section_year_id'
+            ])
             ->get();
             return response()->json($res);
         }

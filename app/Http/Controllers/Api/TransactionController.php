@@ -21,11 +21,14 @@ class TransactionController extends Controller
             if(!$perPage) $perPage = 15;
 
             $conds = [];
-            if($request->input('class')){
-                $conds['class_section_year.class_id'] = $request->input('class');
+            if($request->input('cid')){
+                $conds['class_section_year.class_id'] = $request->input('cid');
             }
-            if($request->input('section')){
-                $conds['class_section_year.section_id'] = $request->input('section');
+            if($request->input('sid')){
+                $conds['class_section_year.section_id'] = $request->input('sid');
+            }
+            if($request->input('yid')){
+                $conds['class_section_year.year_id'] = $request->input('yid');
             }
             if ($request->input('sr_id')) {
                 $conds['student_roll_id'] = $request->input('sr_id');

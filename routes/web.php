@@ -30,3 +30,33 @@ Route::get('application', function ()
 {
     return view('application/index');
 });
+
+Route::get('admin/subject-teacher', function ()
+{
+    return view('admin.subject-teacher');
+});
+
+Route::get('admin/auth', function ()
+{
+    return view('admin.auth');
+});
+
+Route::get('common/portion', function ()
+{
+  return view('common.subject-portion');
+});
+
+Route::get('student/mark', function ()
+{
+  return view('student.mark');
+});
+
+Route::get('common/tabulation', function ()
+{
+  return view('common.tabulation');
+});
+
+Route::get('common/mark/update', function ()
+{
+  return view('common.mark-update');
+});
