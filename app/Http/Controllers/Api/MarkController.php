@@ -94,8 +94,10 @@ class MarkController extends Controller
       ->join('students', 'student_id', 'students.id')
       ->join('users', 'students.id', 'users.id')
       ->where('subject_teacher.class_section_year_id', $csy)
-      ->select('term', 'subject_code', 'subject', 'portion', 'marks.mark', 'roll', 'first_name', 'last_name')
-      ->orderByRaw('term_id, subject_code, portion, roll')->get();
+      ->where('marks.mark', '>', 0)
+      ->select(DB::raw('term, subject_code, subject, ( (sum(marks.mark) / sum(subject_teacher_portion.percentage) ) * avg(subjects.mark)) as mark, avg(subjects.mark) as total_mark, roll, first_name, last_name, student_id, term_id, class_section_year_term.percentage as term_percentage, subject_teacher_student.is_compulsory'))
+      ->groupBy(DB::raw('term, subject_code, subject, roll, first_name, last_name, student_id, term_id, class_section_year_term.percentage, subject_teacher_student.is_compulsory'))
+      ->orderByRaw('term_id, subject_code, roll')->get();
 
         return response()->json($res);
       }

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 @extends('layouts.app')
 
 @section('style')
@@ -96,7 +97,7 @@
 @section('script')
   <script type="text/javascript">
   /* global Vue, _, axios */
-  new Vue({
+  var app = new Vue({
     el: '#vm',
     data: {
       csy: [],
