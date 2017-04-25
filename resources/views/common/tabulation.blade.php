@@ -20,25 +20,7 @@
     color: #103771;
     min-width: 100px;
 }
-.table{
-    display: table;
-}
-.table-cell{
-    display: table-cell;
-    min-width: 60px;
-}
-.table-row{
-    display: table-row;
-}
-.width33{
-    min-width: 181px;
-}
-.width100{
-    column-span: all;
-    width: 100%;
-    min-width: 100%;
-}
-span, p, th{
+td, th{
     text-align: center;
 }
 </style>
@@ -89,34 +71,30 @@ span, p, th{
         </div>
 
         <div class="col-md-12 table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-hover table-bordered">
                 <thead>
                     <tr>
                         <th rowspan="3">New Roll</th>
                         <th rowspan="3">Old Roll</th>
                         <th rowspan="3" style="min-width:150px">Name</th>
-                        <th v-for="sub in subs" :colspan="terms.length * 3">@{{sub}}</th>
+                        <th v-for="sub in subs" :colspan="(terms.length * 3) + 1">@{{sub}}</th>
                         <th rowspan="3">GPA</th>
                     </tr>
                     <tr>
 
-                        <th v-for="sub in subs" :colspan="terms.length * 3" style="position: relative">
-                            <span v-for="term in terms" class="table-cell width33"
-                                style="border-right: 2px solid #ddd;">
-                                @{{term.term + ' (' + term.percentage + '%)'}}
-                            </span>
-                            <span class="table-cell">Subject Grade</span>
-                        </th>
+                        <template v-for="sub in subs">
+                            <th v-for="term in terms" colspan="3">@{{term.term + ' (' + term.percentage + '%)'}}</th>
+                            <th rowspan="2">Subject Grade</th>
+                        </template>
                     </tr>
                     <tr>
-                        <th v-for="sub in subs" :colspan="terms.length * 3">
-                            <div v-for="term in terms" class="table-cell"
-                                style="border-right: 2px solid #ddd;">
-                                <span class="table-cell">Mark</span>
-                                <span class="table-cell">Grade</span>
-                                <span class="table-cell">Point</span>
-                            </div>
-                        </th>
+                        <template v-for="sub in subs">
+                            <template v-for="term in terms">
+                                <th>Mark</th>
+                                <th>Grade</th>
+                                <th>Point</th>
+                            </template>
+                        </template>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,21 +102,20 @@ span, p, th{
                         <td>@{{index + 1}}</td>
                         <td>@{{getRoll(std)}}</td>
                         <td>@{{getName(std)}}</td>
-                        <td v-for="sub in subs" :colspan="terms.length * 3">
-                            <div v-if="std[sub] !== undefined" class="table-cell width100">
-                                <p v-for="term in terms.length" class="table-cell"
-                                    style="border-right: 2px solid #ddd;">
-                                    <span class="table-cell">@{{Math.round(std[sub][term-1].mark)}}</span>
-                                    <span class="table-cell"
+                        <template v-for="sub in subs" :colth="terms.length * 3">
+                            <template v-if="std[sub] !== undefined">
+                                <template v-for="term in terms.length">
+                                    <td>@{{Math.round(std[sub][term-1].mark)}}</td>
+                                    <td
                                         :class="{aplus: std[sub][term-1].grade === 'A+', fail: std[sub][term-1].grade === 'F'}">
                                         <strong>@{{std[sub][term-1].grade}}</strong>
-                                    </span>
-                                    <span class="table-cell">@{{std[sub][term-1].grade_point}}</span>
-                                </p>
-                                <p class="table-cell">@{{std[sub].grade_point.toFixed(2)}}</p>
-                            </div>
-                            <div v-if="std[sub] === undefined">N/A</div>
-                        </td>
+                                    </td>
+                                    <td>@{{std[sub][term-1].grade_point}}</td>
+                                </template>
+                                <th>@{{std[sub].grade_point.toFixed(2)}}</th>
+                            </template>
+                            <td :colspan="terms.length*3" v-if="std[sub] === undefined">N/A</td>
+                        </template>
                         <td>@{{std.gpa.toFixed(2)}}</td>
                     </tr>
                 </tbody>
