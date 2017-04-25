@@ -103,7 +103,7 @@ span, p, th{
                         <th v-for="sub in subs" :colspan="terms.length * 3" style="position: relative">
                             <span v-for="term in terms" class="table-cell width33"
                                 style="border-right: 2px solid #ddd;">
-                                @{{term.term}}
+                                @{{term.term + ' (' + term.percentage + '%)'}}
                             </span>
                             <span class="table-cell">Subject Grade</span>
                         </th>
@@ -293,7 +293,7 @@ span, p, th{
                 }
                 for (var v in students) {
                     for (var vv in students[v]) {
-                        this.terms = _.map(students[v][vv], (o) => ({term: o.term, term_id: o.term_id}));
+                        this.terms = _.map(students[v][vv], (o) => ({term: o.term, term_id: o.term_id, percentage: o.term_percentage}));
                         break;
                     }
                     break;
