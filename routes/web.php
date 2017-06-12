@@ -51,6 +51,11 @@ Route::get('common/portion', function ()
   return view('common.subject-portion');
 });
 
+Route::get('common/assign-subject', function ()
+{
+  return view('common.assign-subject');
+});
+
 Route::get('student/mark', function ()
 {
   return view('student.mark');
@@ -64,4 +69,8 @@ Route::get('common/tabulation', function ()
 Route::get('common/mark/update', function ()
 {
   return view('common.mark-update');
+});
+
+Route::get('links', function (){
+   return view('lists');
 });

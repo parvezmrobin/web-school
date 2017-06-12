@@ -1,0 +1,25 @@
+.aplus{
+    color: darkgreen;
+}
+.fail{
+    color: crimson;
+}
+.form-control, .btn{
+    max-width: 280px;
+    border-radius: 1px;
+}
+
+.btn{
+    background: transparent;
+    font-weight: bold;
+    min-width: 100px;
+}
+.btn-primary{
+    color: #122b40;
+}
+.btn-default{
+    color: #8c8c8c;
+}
+td, th{
+    text-align: center;
+}

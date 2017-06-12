@@ -1,8 +1,7 @@
-<!DOCTYPE html>
 @extends('layouts.app')
 
 @section('style')
-<style media="screen">
+<style media="screen" xmlns:v-on="http://www.w3.org/1999/xhtml">
 .form-control{
     max-width: 280px;
     background: rgba(255, 255, 255, .7);
@@ -80,7 +79,9 @@
                                 <tr v-for="editor in markEditors">
                                     <td>@{{editor.first_name + ' ' + editor.last_name}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-danger btn-sm" @click="removeMarkAuth(editor.id)">
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm"
+                                                v-on:click="removeMarkAuth(editor.id)">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </td>
@@ -151,7 +152,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-9 col-sm-offset-3">
-                                <button type="button" class="btn btn-primary" @click="authTrans">
+                                <button type="button" class="btn btn-primary" v-on:click="authTrans">
                                     Assign
                                 </button>
                             </div>
@@ -244,6 +245,15 @@
                 this.loadFrom(url, 'get', (response) => {
                     this.markEditors = response.data;
                 });
+            },
+            year: function () {
+                this.updateSt();
+            },
+            classs: function () {
+                this.updateSt();
+            },
+            section: function () {
+                this.updateSt();
             }
         },
         methods: {
@@ -293,6 +303,19 @@
                 });
             },
             removeTransAuth: (editorId) => {
+
+            },
+            updateSt: () => {
+                url = '{{url("api/st")}}?cid=' + this.classs + '&sid=' + this.section + '&yid=' + this.year + '&token=';
+                app.loadFrom(url, 'get', (response) => {
+                    this.subjectTeachers = response.data;
+                    this.st = response.data[0].id;
+
+                    url = '{{url("api/auth/mark")}}?st=' + this.st + '&cid=' + this.classs + '&sid=' + this.section + '&yid=' + this.year + '&token=';
+                    this.loadFrom(url, 'get', (response) => {
+                        this.markEditors = response.data;
+                    })
+                });
 
             }
         },
