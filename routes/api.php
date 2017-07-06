@@ -76,9 +76,9 @@ Route::group(['middleware' => 'jwt.auth'], function ()
   Route::delete('response/{id}', 'ResponseController@destroy');
 
   Route::get('subject', 'SubjectController@index');
-  Route::post('subject', 'SubjectController@subjectore');
+  Route::post('subject', 'SubjectController@store');
   Route::put('subject/{id}', 'SubjectController@update');
-  Route::delete('subject/{id}', 'SubjectController@desubjectroy');
+  Route::delete('subject/{id}', 'SubjectController@destroy');
 
   Route::get('st', 'SubjectTeacherController@index');
   Route::post('st', 'SubjectTeacherController@store');
@@ -91,19 +91,19 @@ Route::group(['middleware' => 'jwt.auth'], function ()
   Route::get('stp/delete/{id}', 'SubjectTeacherPortionController@delete');
 
   Route::get('term', 'TermController@index');
-  Route::post('term', 'TermController@termore');
+  Route::post('term', 'TermController@store');
   Route::put('term/{id}', 'TermController@update');
-  Route::delete('term/{id}', 'TermController@destsroy');
+  Route::delete('term/{id}', 'TermController@destroy');
 
   Route::get('sr', 'StudentRollController@index');
-  Route::post('sr', 'StudentRollController@srore');
+  Route::post('sr', 'StudentRollController@store');
   Route::put('sr/{id}', 'StudentRollController@update');
   Route::delete('sr/{id}', 'StudentRollController@destroy');
 
   Route::get('sts', 'SubjectTeacherStudentController@index');
-  Route::post('sts', 'SubjectTeacherStudentController@stsore');
+  Route::post('sts', 'SubjectTeacherStudentController@store');
   Route::put('sts/{id}', 'SubjectTeacherStudentController@update');
-  Route::delete('sts/{id}', 'SubjectTeacherStudentController@destsroy');
+  Route::delete('sts/{id}', 'SubjectTeacherStudentController@destroy');
 
   Route::get('app', 'ApplicationController@index');
   Route::post('app', 'ApplicationController@store');

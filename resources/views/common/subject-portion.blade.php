@@ -218,7 +218,7 @@
                 }
             },
             remove: (id) => {
-                var url = '{{url("api/stp/delete")}}/' + id + '?token=';
+                var url = '{{url("api/stp/delete")}}/' + id + '?st=' + app.st + '&token=';
                 app.loadFrom(url, 'get', (resp) => {
                     var i = _.find(app.subjectTeacherPortions, (o) => { return o.id === id; });
                     app.subjectTeacherPortions.splice(i, 1);

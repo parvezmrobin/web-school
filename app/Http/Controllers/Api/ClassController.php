@@ -28,7 +28,7 @@ class ClassController extends Controller
     */
     public function store(Request $request)
     {
-        if($request->user()->isInRole('admin')){
+        if($request->user()->isInRole(['admin'])){
             $cls = new Classs;
             $cls->class = $request->input('class');
             $cls->save();
@@ -46,7 +46,7 @@ class ClassController extends Controller
     */
     public function update(Request $request, $id)
     {
-        if($request->user()->isInRole('admin')){
+        if($request->user()->isInRole(['admin'])){
             $cls = Classs::find($id);
             if($request->input('class')){$cls->class = $request->input('class');}
             $cls->save();
@@ -63,7 +63,7 @@ class ClassController extends Controller
     */
     public function destroy(Request $request, $id)
     {
-        if($request->user()->isInRole('admin')){
+        if($request->user()->isInRole(['admin'])){
             $cls = Classs::find($id);
             $cls->delete();
             return response()->json(["status" => "succeeded"]);

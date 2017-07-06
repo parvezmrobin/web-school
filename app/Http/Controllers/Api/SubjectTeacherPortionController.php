@@ -30,7 +30,6 @@ class SubjectTeacherPortionController extends Controller
 
     public function store(Request $request)
     {
-
         $user = $request->user();
         $subTeaId = $request->input('st');
         $teacher = DB::table('subject_teacher')
@@ -42,9 +41,11 @@ class SubjectTeacherPortionController extends Controller
             ->where('portion_id', $request->input('portion'))
             ->where('percentage', $request->input('percentage'))
             ->first();
+
             if (isset($instance->id)){
-                return $instance;
+                return response()->json($instance);
             }
+
             $vals = [
                 'subject_teacher_id' => $subTeaId,
                 'portion_id' => $request->input('portion'),
@@ -52,6 +53,7 @@ class SubjectTeacherPortionController extends Controller
                 'created_at' => new Carbon,
                 'updated_at' => new Carbon
             ];
+
             try {
                 $id = DB::table($this->table)->insertGetId($vals);
             } catch (\Illuminate\Database\QueryException $e) {
@@ -59,6 +61,30 @@ class SubjectTeacherPortionController extends Controller
             }
 
 
+            // Filling up the marks table
+            $sts = DB::table('subject_teacher_student')
+                ->where('subject_teacher_id', $subTeaId)
+                ->get();
+
+            $csyt = DB::table('class_section_year_term')
+                ->join('class_section_year', 'class_section_year.id', 'class_section_year_id')
+                ->join('subject_teacher', 'subject_teacher.class_section_year_id', 'class_section_year.id')
+                ->join('subject_teacher_portion', 'subject_teacher.id', 'subject_teacher_id')
+                ->where('subject_teacher_portion.id', $id)
+                ->select('class_section_year_term.id')
+                ->get();
+
+            foreach ($sts as $subjectTeacherStudent ) {
+                foreach ($csyt as $classSectinoYearTerm ) {
+                    $mark = new \App\Mark;
+                    $mark->subject_teacher_portion_id = $id;
+                    $mark->subject_teacher_student_id = $subjectTeacherStudent->id;
+                    $mark->class_section_year_term_id = $classSectinoYearTerm->id;
+                    $mark->mark = -2;
+                    $mark->editor_id = $user->id;
+                    $mark->save();
+                }
+            }
             $stp = DB::table($this->table)->where('id', $id)->first();
 
             return response()->json($stp);
@@ -99,7 +125,7 @@ class SubjectTeacherPortionController extends Controller
             ->select('teachers.*')
             ->where('subject_teacher.id', $subTeaId)->first();
         $user = $request->user();
-        if($user->isInRole('admin') || $user->id === $teacher->user_id){
+        if($user->isInRole('admin') || $user->id === $teacher->id){
             DB::table($this->table)->where('id', $id)->delete();
             return response()->json(["status" => "succeeded"]);
         }

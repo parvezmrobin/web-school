@@ -46,6 +46,16 @@ Route::get('admin/term', function ()
     return view('admin.term');
 });
 
+Route::get('admin/class', function ()
+{
+    return view('admin.class-section-year');
+});
+
+Route::get('admin/create', function ()
+{
+    return view('admin.create');
+});
+
 Route::get('common/portion', function ()
 {
   return view('common.subject-portion');
