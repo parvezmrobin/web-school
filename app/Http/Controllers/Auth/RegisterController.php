@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Admin;
+use App\Teacher;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -27,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/links';
 
     /**
      * Create a new controller instance.
@@ -73,5 +77,45 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        $role = $request->input('role');
+        if ($role == 1) {
+            return $this->registerStudent($request, $user);
+        } else if ($role == 2) {
+            return $this->registerTeacher($request, $user);
+        } else if($role == 3) {
+            return $this->registerAdmin($request, $user);
+        }
+    }
+
+    private function registerTeacher($request, $user)
+    {
+        $teacher = new Teacher();
+        $teacher->designation_id = is_null($request->input('designation_id')) ?
+            2 : $request->input('designation_id');
+        $teacher->qualification = is_null($request->input('qualification')) ?
+            2 : $request->input('qualification');
+        $teacher->id = $user->id;
+        $teacher->save();
+    }
+
+    private function registerAdmin($request, $user)
+    {
+        $admin = new Admin();
+        $admin->id = $user->id;
+        $admin->save();
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
     }
 }

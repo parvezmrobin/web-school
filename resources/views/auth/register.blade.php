@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container" id="vm">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
@@ -138,8 +138,8 @@
                             <label for="role" class="col-md-4 control-label">Role</label>
 
                             <div class="col-md-6">
-                                <select id="role" class="form-control" name="role" value="{{ old('role') }}">
-                                    <option value="1">Stduent</option>
+                                <select id="role" class="form-control" name="role" v-model="role" value="{{ old('role') }}">
+                                    <option value="1">Student</option>
                                     <option value="2">Teacher</option>
                                     <option value="3">Admin</option>
                                 </select>
@@ -149,6 +149,59 @@
                                         <strong>{{ $errors->first('role') }}</strong>
                                     </span>
                                 @endif
+                            </div>
+                        </div>
+
+                        <div id="extra">
+                            <div id="student" v-if="role == 1">
+                                <div class="form-group">
+                                    <label for="year" class="col-md-4 control-label">Year</label>
+
+                                    <div class="col-md-6">
+                                        <select id="year" class="form-control" name="year" v-model="year">
+                                            <option v-for="year in years" :value="year.id">@{{ year.year }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="class" class="col-md-4 control-label">Class</label>
+
+                                    <div class="col-md-6">
+                                        <select id="class" class="form-control" name="class" v-model="cls">
+                                            <option v-for="cls in classes" :value="cls.id">@{{ cls.class }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="section" class="col-md-4 control-label">Section</label>
+
+                                    <div class="col-md-6">
+                                        <select id="section" class="form-control" name="section" v-model="section">
+                                            <option v-for="section in sections" :value="section.id">@{{ section.section }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="teacher" v-if="role == 2">
+                                <div class="form-group">
+                                    <label for="designation" class="col-md-4 control-label">Designation</label>
+
+                                    <div class="col-md-6">
+                                        <select id="designation" class="form-control" name="designation" value="{{ old('designation') }}">
+                                            <option value="1">Assistant Teacher</option>
+                                            <option value="2">Senior Teacher</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="qualification" class="col-md-4 control-label">Qualification</label>
+
+                                    <div class="col-md-6">
+                                        <textarea name="qualification" id="qualification" class="form-control">{{old('qualification')}}</textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -165,4 +218,35 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('script')
+    <script>
+        const app = new Vue({
+            el: '#vm',
+            data: {
+                role: '{{old('role')}}',
+                cls: '1',
+                year: '1',
+                section: '1',
+                years: [
+                    {id: 1, year: 2015},
+                    {id: 2, year: 2016},
+                    {id: 3, year: 2017}
+                ],
+                classes: [
+                    {id: 1, class: 'One'},
+                    {id: 2, class: 'Two'},
+                    {id: 3, class: 'Three'},
+                    {id: 4, class: 'Four'},
+                    {id: 5, class: 'Five'}
+                ],
+                sections: [
+                    {id: 1, section: 'A'},
+                    {id: 2, section: 'B'},
+                    {id: 3, section: 'C'}
+                ]
+            }
+        })
+    </script>
 @endsection

@@ -36,6 +36,7 @@ class SubjectTeacherPortionController extends Controller
             ->where('subject_teacher.id', $subTeaId)->first();
 
         if($user->isInRole(['admin']) || $teacher->teacher_id === $user->id){
+            // Check if the instance already exists
             $instance = DB::table($this->table)
             ->where('subject_teacher_id', $subTeaId)
             ->where('portion_id', $request->input('portion'))
@@ -46,6 +47,7 @@ class SubjectTeacherPortionController extends Controller
                 return response()->json($instance);
             }
 
+            // If not, then create
             $vals = [
                 'subject_teacher_id' => $subTeaId,
                 'portion_id' => $request->input('portion'),
@@ -54,37 +56,45 @@ class SubjectTeacherPortionController extends Controller
                 'updated_at' => new Carbon
             ];
 
-            try {
-                $id = DB::table($this->table)->insertGetId($vals);
-            } catch (\Illuminate\Database\QueryException $e) {
-                return response()->json(["status" => "Already Exists"], 500);
-            }
 
+            $id = DB::table($this->table)->insertGetId($vals);
 
             // Filling up the marks table
-            $sts = DB::table('subject_teacher_student')
-                ->where('subject_teacher_id', $subTeaId)
-                ->get();
+            $array = DB::table('subject_teacher_student')
+                ->join(
+                    'subject_teacher',
+                    'subject_teacher.id',
+                    'subject_teacher_student.subject_teacher_id')
+                ->join(
+                    'class_section_year_term',
+                    'class_section_year_term.class_section_year_id',
+                    'subject_teacher.class_section_year_id'
+                )->where('subject_teacher_id', $subTeaId)
+                ->select(
+                    'class_section_year_term.id as class_section_year_term_id',
+                    'subject_teacher_student.id as subject_teacher_student_id'
+                )->get();
 
-            $csyt = DB::table('class_section_year_term')
-                ->join('class_section_year', 'class_section_year.id', 'class_section_year_id')
-                ->join('subject_teacher', 'subject_teacher.class_section_year_id', 'class_section_year.id')
-                ->join('subject_teacher_portion', 'subject_teacher.id', 'subject_teacher_id')
-                ->where('subject_teacher_portion.id', $id)
-                ->select('class_section_year_term.id')
-                ->get();
+//            $csyt = DB::table('class_section_year_term')
+//                ->join(
+//                    'subject_teacher',
+//                    'subject_teacher.class_section_year_id',
+//                    'class_section_year_term.class_section_year_id'
+//                )->where('subject_teacher.id', $subTeaId)
+//                ->select('class_section_year_term.id')
+//                ->get();
 
-            foreach ($sts as $subjectTeacherStudent ) {
-                foreach ($csyt as $classSectinoYearTerm ) {
+
+                foreach ($array as $item ) {
                     $mark = new \App\Mark;
                     $mark->subject_teacher_portion_id = $id;
-                    $mark->subject_teacher_student_id = $subjectTeacherStudent->id;
-                    $mark->class_section_year_term_id = $classSectinoYearTerm->id;
+                    $mark->subject_teacher_student_id = $item->subject_teacher_student_id;
+                    $mark->class_section_year_term_id = $item->class_section_year_term_id;
                     $mark->mark = -2;
                     $mark->editor_id = $user->id;
                     $mark->save();
                 }
-            }
+
             $stp = DB::table($this->table)->where('id', $id)->first();
 
             return response()->json($stp);

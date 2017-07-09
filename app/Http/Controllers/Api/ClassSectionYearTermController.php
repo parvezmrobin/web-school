@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use App\Mark;
 use DB;
 
 class ClassSectionYearTermController extends Controller
@@ -37,14 +38,15 @@ class ClassSectionYearTermController extends Controller
     {
         $user = $request->user();
         if($user->isInRole(['admin'])){
-            // If already exsists return error
+            // If already exists, return error
             $res = DB::table($this->table)
             ->where('class_section_year_id', $request->input('csy'))
             ->where('term_id', $request->input('term'))
             ->first();
             if (isset($res->id)) {
-                return response()->json(["status" => "Already exsists"], 500);
+                return response()->json(["status" => "Already exists"], 500);
             }
+
             // else create a new entry
             $vals = [
                 'class_section_year_id' => $request->input('csy'),
@@ -57,6 +59,38 @@ class ClassSectionYearTermController extends Controller
             $res = DB::table($this->table)
             ->where('id', $id)
             ->first();
+
+
+            // Get the subjectTeacherStudents and SubjectTeacherPortions
+            $subjectTeacherStudentPortions = DB::table('subject_teacher_student')
+                ->join('subject_teacher', 'subject_teacher.id', 'subject_teacher_student.subject_teacher_id')
+                ->join('subject_teacher_portion', 'subject_teacher_portion.subject_teacher_id', 'subject_teacher.id')
+                ->where('subject_teacher.class_section_year_id', $request->input('csy'))
+                ->select(
+                    'subject_teacher_student.id as subject_teacher_student_id',
+                    'subject_teacher_portion.id as subject_teacher_portion_id'
+                )->distinct()
+                ->get();
+
+            $count = 0;
+
+                foreach ($subjectTeacherStudentPortions as $subjectTeacherStudentPortion) {
+                    $mark = new Mark;
+                    $mark->subject_teacher_portion_id =
+                        $subjectTeacherStudentPortion->subject_teacher_portion_id;
+                    $mark->subject_teacher_student_id =
+                        $subjectTeacherStudentPortion->subject_teacher_student_id;
+                    $mark->class_section_year_term_id = $id;
+                    $mark->mark = -2;
+                    $mark->editor_id = $user->id;
+                    $mark->created_at = new Carbon();
+                    $mark->updated_at = new Carbon();
+                    $mark->save();
+                    $count++;
+                }
+
+            $res->count = $count;
+
             return response()->json($res);
         }
         return response()->json(["status"=>"Unauthorized"], 403);
@@ -75,8 +109,8 @@ class ClassSectionYearTermController extends Controller
                 $cond['term_id'] = $request->input('term');
             }
 
-            DB::table($table)->where('id', $id)->update($conds);
-            $res = DB::table($table)
+            DB::table($this->table)->where('id', $id)->update($conds);
+            $res = DB::table($this->table)
             ->join('classes', 'class_id', 'classes.id')
             ->join('sections', 'section_id', 'sections.id')
             ->join('years', 'year_id', 'years.id')

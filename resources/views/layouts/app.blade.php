@@ -35,7 +35,7 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
+                    <a class="navbar-brand" href="{{ url('/links') }}">
                         {{ config('app.name', 'Laravel') }}
                     </a>
                 </div>
@@ -51,7 +51,7 @@
                         <!-- Authentication Links -->
                         @if (Auth::guest())
                             <li><a href="{{ url('/login') }}">Login</a></li>
-                            <li><a href="{{ url('/register') }}">Register</a></li>
+                            {{--<li><a href="{{ url('/register') }}">Register</a></li>--}}
                         @else
                             @if(Auth::user()->isInRole('student'))
                             <li><a href="{{url('student/summary')}}">Summary</a></li>

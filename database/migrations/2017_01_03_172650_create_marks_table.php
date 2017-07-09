@@ -37,7 +37,7 @@ class CreateMarksTable extends Migration
             $table->foreign('class_section_year_term_id')
                 ->references('id')->on('class_section_year_term')
                 ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('editor_id')->references('id')->on('editors')
+            $table->foreign('editor_id')->references('id')->on('users')
                 ->onUpdate('cascade')->onDelete('cascade');
         });
     }
