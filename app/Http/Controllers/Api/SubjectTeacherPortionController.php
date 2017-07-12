@@ -84,7 +84,6 @@ class SubjectTeacherPortionController extends Controller
 //                ->select('class_section_year_term.id')
 //                ->get();
 
-
                 foreach ($array as $item ) {
                     $mark = new \App\Mark;
                     $mark->subject_teacher_portion_id = $id;
@@ -96,7 +95,7 @@ class SubjectTeacherPortionController extends Controller
                 }
 
             $stp = DB::table($this->table)->where('id', $id)->first();
-
+            $stp->count = $array->count();
             return response()->json($stp);
         }
         return response()->json(["status"=>"Unauthorized"], 403);

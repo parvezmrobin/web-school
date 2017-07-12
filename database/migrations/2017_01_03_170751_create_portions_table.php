@@ -15,7 +15,7 @@ class CreatePortionsTable extends Migration
     {
         Schema::create('portions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('portion', 32);
+            $table->string('portion', 32)->unique();
             $table->timestamps();
         });
     }

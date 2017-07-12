@@ -15,7 +15,7 @@ class CreateSubjectsTable extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('subject_code', 16);
+            $table->string('subject_code', 16)->unique();
             $table->string('subject', 64);
             $table->tinyInteger('mark');
             $table->boolean('is_compulsory')->default(1);

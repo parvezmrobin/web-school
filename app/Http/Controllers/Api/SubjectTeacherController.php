@@ -66,13 +66,13 @@ class SubjectTeacherController extends Controller
         ->select($selects)
         ->where($conds)->get();
 
-        return response()->json($res);;
+        return response()->json($res);
     }
 
     public function store(Request $request)
     {
         $user = $request->user();
-        if($user->isInRole('admin')){
+        if($user->isInRole(['admin'])){
             $st = SubjectTeacher::where([
                 'subject_id' => $request->input('subject'),
                 'teacher_id' => $request->input('teacher'),
@@ -87,6 +87,28 @@ class SubjectTeacherController extends Controller
             $st->teacher_id = $request->input('teacher');
             $st->class_section_year_id = $request->input('csy');
             $st->save();
+
+            $studentRolls = DB::table('subject_teacher')
+                ->join(
+                    'student_roll',
+                    'student_roll.class_section_year_id',
+                    'subject_teacher.class_section_year_id'
+                )->where('subject_teacher.id', $st->id)
+                ->select('student_roll.*')
+                ->get();
+
+            foreach ($studentRolls as $studentRoll) {
+                DB::table('subject_teacher_student')
+                    ->insert([
+                       'subject_teacher_id' => $st->id,
+                        'student_roll_id' => $studentRoll->id,
+                        'is_compulsory' => 1,
+                        'created_at' => new Carbon(),
+                        'updated_at' => new Carbon()
+                    ]);
+            }
+
+            $st->count = count($studentRolls);
 
             return response()->json($st);
         }
@@ -109,7 +131,7 @@ class SubjectTeacherController extends Controller
                 $conds['class_section_year_id'] = $request->input('csy');
             }
 
-            DB::table($table)->where('id', $id)->update($conds);
+            DB::table($this->table)->where('id', $id)->update($conds);
             $res = DB::table($this->table)->where('id', $id)->first();
             return response()->json($res);
         }

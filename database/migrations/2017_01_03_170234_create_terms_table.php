@@ -15,7 +15,7 @@ class CreateTermsTable extends Migration
     {
         Schema::create('terms', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('term', 32);
+            $table->string('term', 32)->unique();
             $table->timestamps();
         });
     }

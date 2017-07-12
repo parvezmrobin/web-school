@@ -138,7 +138,7 @@
                             <label for="role" class="col-md-4 control-label">Role</label>
 
                             <div class="col-md-6">
-                                <select id="role" class="form-control" name="role" v-model="role" value="{{ old('role') }}">
+                                <select id="role" class="form-control" name="role" v-model="role" value="{{ old('role')?: '1' }}">
                                     <option value="1">Student</option>
                                     <option value="2">Teacher</option>
                                     <option value="3">Admin</option>
@@ -183,6 +183,14 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="roll" class="col-md-4 control-label">Roll</label>
+
+                                    <div class="col-md-6">
+                                        <input type="number" name="roll" id="roll" class="form-control">
+                                    </div>
+                                </div>
                             </div>
                             <div id="teacher" v-if="role == 2">
                                 <div class="form-group">
@@ -225,7 +233,7 @@
         const app = new Vue({
             el: '#vm',
             data: {
-                role: '{{old('role')}}',
+                role: '{{old('role')?: '1'}}',
                 cls: '1',
                 year: '1',
                 section: '1',
@@ -247,6 +255,32 @@
                     {id: 3, section: 'C'}
                 ]
             }
+            {{--,--}}
+            {{--mounted() {--}}
+                {{--let url = '{{url("api/token")}}';--}}
+                {{--axios.get(url)--}}
+                    {{--.then(function(resp) {--}}
+                        {{--const token = resp.data.token;--}}
+
+                        {{--url = '{{url("api/year")}}?token=' + token;--}}
+                        {{--axios.get(url)--}}
+                            {{--.then(function(resp) {--}}
+                                {{--this.years = resp.data;--}}
+                            {{--});--}}
+
+                        {{--url = '{{url("api/class")}}?token=' + token;--}}
+                        {{--axios.get(url)--}}
+                            {{--.then(function (resp) {--}}
+                                {{--this.classes = resp.data;--}}
+                            {{--});--}}
+
+                        {{--url = '{{url("api/section")}}?token=' + token;--}}
+                        {{--axios.get(url)--}}
+                            {{--.then(function (resp) {--}}
+                                {{--this.sections = resp.data;--}}
+                            {{--})--}}
+                    {{--});--}}
+            {{--}--}}
         })
     </script>
 @endsection

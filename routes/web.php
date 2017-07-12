@@ -12,8 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('lists');
+})->middleware('auth');
 
 Auth::routes();
 
@@ -83,4 +83,4 @@ Route::get('common/mark/update', function ()
 
 Route::get('links', function (){
    return view('lists');
-});
+})->middleware('auth');
