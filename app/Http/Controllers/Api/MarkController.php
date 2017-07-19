@@ -20,8 +20,11 @@ class MarkController extends Controller
     } elseif (!$user->isInRole(['admin', 'teacher', 'editor'])) {
       return response()->json(["status"=>"Unauthorized"], 403);
     }
+    if ($user->isInRole(['teacher'])) {
+        $conds[] = ['subject_teacher.teacher_id', $user->id];
+    }
     if ($request->input('stid')) {
-      array_push($conds, ['subject_teacher_id', $request->input('stid')]);
+      array_push($conds, ['subject_teacher.id', $request->input('stid')]);
     }
     if ($request->input('csyid')) {
       array_push($conds, ['subject_teacher.class_section_year_id', $request->input('csyid')]);

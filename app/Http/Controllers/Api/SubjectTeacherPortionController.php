@@ -37,14 +37,14 @@ class SubjectTeacherPortionController extends Controller
 
         if($user->isInRole(['admin']) || $teacher->teacher_id === $user->id){
             // Check if the instance already exists
-            $instance = DB::table($this->table)
+            $count = DB::table($this->table)
             ->where('subject_teacher_id', $subTeaId)
             ->where('portion_id', $request->input('portion'))
             ->where('percentage', $request->input('percentage'))
-            ->first();
+            ->count();
 
-            if (isset($instance->id)){
-                return response()->json($instance);
+            if ($count){
+                return response()->json(["status" => "Already Exists"], 500);
             }
 
             // If not, then create
