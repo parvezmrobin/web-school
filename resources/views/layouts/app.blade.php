@@ -53,8 +53,19 @@
                             <li><a href="{{ url('/login') }}">Login</a></li>
                             {{--<li><a href="{{ url('/register') }}">Register</a></li>--}}
                         @else
-                            @if(Auth::user()->isInRole('student'))
+                            @if(Auth::user()->isInRole(['student']))
                             <li><a href="{{url('student/summary')}}">Summary</a></li>
+                            @elseif(Auth::user()->isInRole(['teacher', 'admin']))
+                                <li><a href="{{url('common/portion')}}">Mark Portion</a></li>
+                                <li><a href="{{url('common/tabulation')}}">Tabulation</a></li>
+                                <li><a href="{{url('common/mark/update')}}">Mark Update</a></li>
+
+                                @if(Auth::user()->isInRole(['admin']))
+                                    <li><a href="{{url('admin/subject-teacher')}}">Subject-Teacher</a></li>
+                                    <li><a href="{{url('admin/term')}}">Term</a></li>
+                                    <li><a href="{{url('admin/create')}}">Create</a></li>
+                                    <li><a href="{{url('register')}}">Register</a></li>
+                                @endif
                             @endif
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
