@@ -33,7 +33,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/links';
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -53,6 +53,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+
         return Validator::make($data, [
             'first_name' => 'required|max:255',
             'last_name' => 'required:max255',
@@ -113,78 +114,96 @@ class RegisterController extends Controller
 
     private function registerStudent(Request $request, $user)
     {
-        $year = $request->input('year');
-        $class = $request->input('class');
-        $section = $request->input('section');
-        $csy = DB::table('class_section_year')
-            ->where('class_id', $class)
-            ->where('section_id', $section)
-            ->where('year_id', $year)
-            ->first();
+        try {
+            $year = $request->input('year');
+            $class = $request->input('class');
+            $section = $request->input('section');
+            $csy = DB::table('class_section_year')
+                ->where('class_id', $class)
+                ->where('section_id', $section)
+                ->where('year_id', $year)
+                ->first();
 
-        DB::table('students')
-            ->insert([
-                'guardian_occupation' => 'abcd',
-                'guardian_occupation_detail' => 'abcd',
-                'id' => $user->id
-            ]);
-
-        $roll = $request->input('roll');
-        $stdRollId = DB::table('student_roll')
-            ->insertGetId([
-                'student_id' => $user->id,
-                'class_section_year_id' => $csy->id,
-                'roll' => $roll
-            ]);
-
-        $subTeachers = DB::table('subject_teacher')
-            ->where('class_section_year_id', $csy->id)
-            ->get();
-
-        $subTeaStudents = [];
-        foreach ($subTeachers as $subTeacher) {
-            $subTeaStudents[] = DB::table('subject_teacher_student')
-                ->insertGetId([
-                    'subject_teacher_id' => $subTeacher->id,
-                    'student_roll_id' => $stdRollId,
-                    'is_compulsory' => 1
-                ]);
-        }
-
-        $classSectionYearTerms = DB::table('class_section_year_term')
-            ->where('class_section_year_id', $csy->id)
-            ->get();
-        $subTeaStdPortions = DB::table('student_roll')
-            ->join('subject_teacher_student', 'student_roll.id', 'student_roll_id')
-            ->join(
-                'subject_teacher',
-                'subject_teacher.id',
-                'subject_teacher_student.subject_teacher_id'
-            )->join(
-                'subject_teacher_portion',
-                'subject_teacher.id',
-                'subject_teacher_portion.subject_teacher_id'
-            )->select(
-                'subject_teacher_portion.id as subject_teacher_portion_id',
-                'subject_teacher_student.id as subject_teacher_student_id'
-            )->where('student_roll.id', $stdRollId)->get();
-
-        foreach ($classSectionYearTerms as $classSectionYearTerm) {
-            foreach ($subTeaStdPortions as $subTeaStdPortion) {
-                $mark = new Mark;
-                $mark->subject_teacher_portion_id =
-                    $subTeaStdPortion->subject_teacher_portion_id;
-                $mark->subject_teacher_student_id =
-                    $subTeaStdPortion->subject_teacher_student_id;
-                $mark->class_section_year_term_id =
-                    $classSectionYearTerm->id;
-                $mark->mark = -2;
-                $mark->editor_id = $user->id;
-                $mark->save();
+            // Existence Check
+            $existingRolls = DB::table('student_roll')
+                ->where('class_section_year_id', $csy->id)
+                ->get();
+            $notIn = [];
+            foreach ($existingRolls as $existingRoll) {
+                $notIn[] = ('"' . $existingRoll->roll . '"');
             }
+            $notIn = implode(',', $notIn);
+
+            $this->validate($request, [
+                'roll' => ('not_in:' . $notIn)
+            ]);
+
+            // Continue to chain insertion
+            DB::table('students')
+                ->insert([
+                    'guardian_occupation' => 'abcd',
+                    'guardian_occupation_detail' => 'abcd',
+                    'id' => $user->id
+                ]);
+
+            $roll = $request->input('roll');
+            $stdRollId = DB::table('student_roll')
+                ->insertGetId([
+                    'student_id' => $user->id,
+                    'class_section_year_id' => $csy->id,
+                    'roll' => $roll
+                ]);
+
+            $subTeachers = DB::table('subject_teacher')
+                ->where('class_section_year_id', $csy->id)
+                ->get();
+
+            $subTeaStudents = [];
+            foreach ($subTeachers as $subTeacher) {
+                $subTeaStudents[] = DB::table('subject_teacher_student')
+                    ->insertGetId([
+                        'subject_teacher_id' => $subTeacher->id,
+                        'student_roll_id' => $stdRollId,
+                        'is_compulsory' => 1
+                    ]);
+            }
+
+            $classSectionYearTerms = DB::table('class_section_year_term')
+                ->where('class_section_year_id', $csy->id)
+                ->get();
+            $subTeaStdPortions = DB::table('student_roll')
+                ->join('subject_teacher_student', 'student_roll.id', 'student_roll_id')
+                ->join(
+                    'subject_teacher',
+                    'subject_teacher.id',
+                    'subject_teacher_student.subject_teacher_id'
+                )->join(
+                    'subject_teacher_portion',
+                    'subject_teacher.id',
+                    'subject_teacher_portion.subject_teacher_id'
+                )->select(
+                    'subject_teacher_portion.id as subject_teacher_portion_id',
+                    'subject_teacher_student.id as subject_teacher_student_id'
+                )->where('student_roll.id', $stdRollId)->get();
+
+            foreach ($classSectionYearTerms as $classSectionYearTerm) {
+                foreach ($subTeaStdPortions as $subTeaStdPortion) {
+                    $mark = new Mark;
+                    $mark->subject_teacher_portion_id =
+                        $subTeaStdPortion->subject_teacher_portion_id;
+                    $mark->subject_teacher_student_id =
+                        $subTeaStdPortion->subject_teacher_student_id;
+                    $mark->class_section_year_term_id =
+                        $classSectionYearTerm->id;
+                    $mark->mark = -2;
+                    $mark->editor_id = $user->id;
+                    $mark->save();
+                }
+            }
+        } catch (\Exception $e) {
+            $user->delete();
+            throw $e;
         }
-
-
     }
 
     public function register(Request $request)

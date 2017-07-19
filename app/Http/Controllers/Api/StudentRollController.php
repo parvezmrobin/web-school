@@ -10,10 +10,13 @@ class StudentRollController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        if($user->isInRole(['admin', 'editor', 'teacher', 'student'])){
-            $conds = [['student_id', $user->id]];
+        $conds = [];
+        if($user->isInRole(['admin', 'editor', 'teacher'])){
             if ($request->input('class')) {
               array_push($conds, ['class_id', $request->input('class')]);
+            }
+            if ($request->input('section')) {
+                array_push($conds, ['section_id', $request->input('section')]);
             }
             if ($request->input('csy')) {
                 array_push($conds, ['class_section_year_id', $request->input('csy')]);
