@@ -2,11 +2,11 @@
 
 @section('style')
     <style media="screen">
-        .form-control, .btn, .panel{
+        .form-control, .btn, .panel {
             border-radius: 1px;
         }
 
-        .panel-heading{
+        .panel-heading {
             border-radius: 1px 1px 5px 5px;
         }
 
@@ -31,7 +31,7 @@
                         <label for="year1" class="control-label col-md-12">Select Year</label>
                         <div class="col-md-12">
                             <select id="year1" v-model="year1" class="form-control">
-                                <option v-for="year in years" :value="year.id">@{{ year.year }}</option>
+                                <option v-for="year in years" :value="year.year_id">@{{ year.year }}</option>
                             </select>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                         <label for="class1" class="control-label col-md-12">Select Class</label>
                         <div class="col-md-12">
                             <select id="class1" v-model="class1" class="form-control">
-                                <option v-for="cls in classes" :value="cls.id">@{{ cls.class }}</option>
+                                <option v-for="cls in classes" :value="cls.class_id">@{{ cls.classs }}</option>
                             </select>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
 
                 <!--Remove Section-->
                 <div class="col-md-4">
-                    <table>
+                    <table class="table">
                         <tr v-for="section in sections">
                             <td>@{{ section.section }}</td>
                             <td>
@@ -97,7 +97,7 @@
 
                 <!--Select and Add Section-->
                 <div class="col-md-4">
-                    <table>
+                    <table class="table">
                         <tr v-for="section in allSections">
                             <td>@{{ section.section }}</td>
                             <td><input type="checkbox" :value="section.id" v-model="selectedSections"></td>
@@ -111,36 +111,85 @@
 
         </div>
         <!--Addition Ends-->
+
+        <!--Creation Starts-->
+        <hr>
+        <h2 v-if="status.length">@{{ status }}</h2>
+
+        {{-- Year Panel --}}
+        <div class="panel panel-warning col-md-4">
+            <h2 class="panel-heading">Create Year</h2>
+            <div class="form-group panel-body">
+                <div class="col-md-8">
+                    <input type="number" name="year" placeholder="Year" class="form-control" v-model="year">
+                </div>
+                <div class="col-md-4">
+                    <button type="button" v-on:click="createYear" class="btn btn-success">Create</button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Class Panel --}}
+        <div class="panel panel-warning col-md-4">
+            <h2 class="panel-heading">Create Class</h2>
+            <div class="form-group panel-body">
+                <div class="col-md-8">
+                    <input type="text" name="class" placeholder="Class" class="form-control" v-model="classs">
+                </div>
+                <div class="col-md-4">
+                    <button type="button" v-on:click="createClass" class="btn btn-success">Create</button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Section Panel --}}
+        <div class="panel panel-warning col-md-4">
+            <h2 class="panel-heading">Create Section</h2>
+            <div class="form-group panel-body">
+                <div class="col-md-8">
+                    <input type="text" name="section" placeholder="Section" class="form-control" v-model="section">
+                </div>
+                <div class="col-md-4">
+                    <button type="button" v-on:click="createSection" class="btn btn-success">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Creation Ends-->
     </div>
 @endsection
 
 @section('script')
-    <script>
+    <script type="application/javascript">
         const app = new Vue({
             el: '#vm',
             data: {
                 csys: [],
-                allYears: [],
-                allClasses: [],
-                allSections: [],
+                allYears: {!! \App\Year::all() !!},
+                allClasses: {!! \App\Classs::all() !!},
+                allSections: {!! \App\Section::all() !!},
                 selectedSections: [],
                 year1: '',
                 class1: '',
                 year2: '',
-                class2: ''
+                class2: '',
+                year: '',
+                classs: '',
+                section: '',
+                status: ''
             },
             computed: {
-                years: function() {
+                years: function () {
                     const res = _.map(this.csys, function (o) {
                         return {year_id: o.year_id, year: o.year};
                     });
                     return _.uniqWith(res, _.isEqual);
                 },
-                classes: function() {
+                classes: function () {
                     const yearId = this.year1;
                     const res = _.map(
                         _.filter(this.csys, function (o) {
-                            return o.year_id === yearId;
+                            return o.year_id == yearId;
                         }),
                         function (o) {
                             return {class_id: o.class_id, classs: o.class};
@@ -148,12 +197,12 @@
                     );
                     return _.uniqWith(res, _.isEqual);
                 },
-                sections: function() {
+                sections: function () {
                     const yearId = this.year1;
                     const classId = this.class1;
                     const res = _.map(
                         _.filter(this.csys, function (o) {
-                            return o.year_id === yearId && o.class_id === classId;
+                            return o.year_id == yearId && o.class_id == classId;
                         }),
                         function (o) {
                             return {
@@ -183,10 +232,31 @@
                             }
                         });
                 },
+                createYear: () => {
+                    var url = '../api/year?year=' + app.year + '&token=';
+                    app.loadFrom(url, 'post', (resp) => {
+                        app.status = 'Year ' + app.year + ' added successfully';
+                        app.allYears.splice(app.allYears.length, 0, resp.data);
+                    });
+                },
+                createClass: () => {
+                    var url = '../api/class?class=' + app.classs + '&token=';
+                    app.loadFrom(url, 'post', (resp) => {
+                        app.status = 'Class ' + app.classs + ' added successfully';
+                        app.allClasses.splice(app.allClasses.length, 0, resp.data);
+                    });
+                },
+                createSection: () => {
+                    var url = '../api/section?section=' + app.section + '&token=';
+                    app.loadFrom(url, 'post', (resp) => {
+                        app.status = 'Section ' + app.section + ' added successfully';
+                        app.allSections.splice(app.allSections.length, 0, resp.data);
+                    });
+                },
                 remove: (csy_id) => {
                     const url = '../api/csy/' + csy_id + '?token=';
                     app.loadFrom(url, 'delete', (resp) => {
-                        const i = _.find(app.csys, {'id': csy_id});
+                        const i = _.findIndex(app.csys, o => o.id == csy_id);
                         app.csys.splice(i, 1);
                     })
                 },
@@ -209,24 +279,13 @@
                     const token = resp.data.token;
 
                     let url = '../api/csy?token=' + token;
-                    axios.get(url).then(function (resp) {
+                    axios.get(url).then((resp) => {
                         this.csys = resp.data;
+                        this.year1 = this.years[0].year_id;
+                        this.class1 = this.classes[0].class_id;
                     });
-
-                    url = '../api/year?token=' + token;
-                    axios.get(url).then(function (resp) {
-                        this.allYears = resp.data;
-                    });
-
-                    url = '../api/class?token=' + token;
-                    axios.get(url).then(function (resp) {
-                        this.allClasses = resp.data;
-                    });
-
-                    url = '../api/section?token=' + token;
-                    axios.get(url).then(function (resp) {
-                        this.allSections = resp.data;
-                    });
+                    this.year2 = this.allYears[0].id;
+                    this.class2 = this.allClasses[0].id;
                 });
             }
         });

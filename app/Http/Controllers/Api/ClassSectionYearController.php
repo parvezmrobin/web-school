@@ -44,8 +44,8 @@ class ClassSectionYearController extends Controller
                 'section_id' => $request->input('section')
             ];
             //If this combination already exists return that instance
-            if (!is_null($instance = DB::table('class_section_year')->where($vals)->first())) {
-                return $instance;
+            if (DB::table('class_section_year')->where($vals)->count()) {
+                return response()->json(["status" => "Already Exists"], 400);
             }
 
             $vals = array_merge($vals, ['created_at' => new Carbon, 'updated_at' => new Carbon]);
@@ -55,7 +55,7 @@ class ClassSectionYearController extends Controller
                 ->join('sections', 'section_id', 'sections.id')
                 ->join('years', 'year_id', 'years.id')
                 ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'class_section_year.id')
-                ->where('id', $id)->first();
+                ->where('class_section_year.id', $id)->first();
             return response()->json($res);
         }
         return response()->json(["status" => "Unauthorized"], 403);
@@ -82,7 +82,7 @@ class ClassSectionYearController extends Controller
                 ->join('sections', 'section_id', 'sections.id')
                 ->join('years', 'year_id', 'years.id')
                 ->select('class_id', 'class', 'section_id', 'section', 'year_id', 'year', 'class_section_year.id')
-                ->where('id', $id)->first();
+                ->where('class_section_year.id', $id)->first();
             return response()->json($res);
         }
         return response()->json(["status" => "Unauthorized"], 403);

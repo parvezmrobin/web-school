@@ -22,9 +22,9 @@
 @endsection
 
 @section('content')
-    <div id="vm" v-cloak>
+    <div id="vm" v-cloak xmlns:v-on="http://www.w3.org/1999/xhtml">
         <div class="row">
-            <div class="col-sm-8 col-sm-offset-2">
+            <div class="col-sm-6">
                 <div class="panel panel-info">
                     <h2 class="panel-heading text-center">Select Scope</h2>
                     <div class="panel-body form-horizontal">
@@ -57,32 +57,33 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="panel panel-primary col-sm-6">
                 <h2 class="panel-heading text-center">Summary</h2>
                 <div class="panel-body">
                     <table class="table table-striped">
                         <thead class="bg-primary">
-                            <th>Term</th>
-                            <th>Percentage</th>
-                            <th></th>
+                        <th>Term</th>
+                        <th>Percentage</th>
+                        <th></th>
                         </thead>
                         <tbody>
-                            <tr v-for="term in existingTerms">
-                                <td>@{{term.term}}</td>
-                                <td>@{{term.percentage}}</td>
-                                <td>
-                                    <button :title="'Remove ' + term.term" type="button" class="btn btn-sm btn-danger" @click="removeTerm(term.id)">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </button>
-                                </td>
-                            </tr>
+                        <tr v-for="term in existingTerms">
+                            <td>@{{term.term}}</td>
+                            <td>@{{term.percentage}}</td>
+                            <td>
+                                <button :title="'Remove ' + term.term" type="button" class="btn btn-sm btn-danger" v-on:click="removeTerm(term.id)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="panel panel-primary col-sm-6">
+        </div>
+        <div class="row">
+
+            <div class="panel panel-primary col-sm-8 col-sm-offset-2">
                 <h2 class="panel-heading text-center">Add Term</h2>
                 <div class="panel-body form-horizontal">
                     <div class="form-group">
@@ -98,10 +99,26 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-5 col-sm-offset-2">
-                            <button type="button" class="btn btn-primary" @click="addTerm">
+                            <button type="button" class="btn btn-primary" v-on:click="addTerm">
                               Add
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <hr>
+            <h2 v-if="status.length">@{{ status }}</h2>
+            {{-- Term Panel --}}
+            <div class="panel panel-warning col-sm-8 col-sm-offset-2">
+                <h2 class="panel-heading">Create Term</h2>
+                <div class="form-group panel-body">
+                    <div class="col-md-8">
+                        <input type="text" name="newTerm" placeholder="New Term" class="form-control" v-model="newTerm">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" v-on:click="createTerm" class="btn btn-success">Create</button>
                     </div>
                 </div>
             </div>
@@ -111,9 +128,8 @@
 
 @section('script')
     <script type="text/javascript">
-    /* global Vue, axios, _ */
-    /* eslint-disable indent */
-    var app = new Vue({
+
+    const app = new Vue({
         el: '#vm',
         data: {
             csys: [],
@@ -123,18 +139,20 @@
             section: '',
             year: '',
             term: '',
-            percentage: ''
+            newTerm: '',
+            percentage: '',
+            status: ''
         },
         computed: {
             years: function () {
-                var res = _.map(this.csys, function (o) {
+                const res = _.map(this.csys, function (o) {
                     return {year_id: o.year_id, year: o.year};
                 });
                 return _.uniqWith(res, _.isEqual);
             },
             classes: function () {
-                var yearId = this.year;
-                var res = _.map(
+                const yearId = this.year;
+                const res = _.map(
                     _.filter(this.csys, function (o) {
                         return o.year_id === yearId;
                     }),
@@ -145,9 +163,9 @@
                 return _.uniqWith(res, _.isEqual);
             },
             sections: function () {
-                var yearId = this.year;
-                var classId = this.classs;
-                var res = _.map(
+                const yearId = this.year;
+                const classId = this.classs;
+                const res = _.map(
                     _.filter(this.csys, function (o) {
                         return o.year_id === yearId && o.class_id === classId;
                     }),
@@ -162,10 +180,10 @@
                 if (this.csys.length === 0) {
                     return undefined;
                 }
-                var yearId = this.year;
-                var classId = this.classs;
-                var sectionId = this.section;
-                var res = _.find(this.csys, function (o) {
+                const yearId = this.year;
+                const classId = this.classs;
+                const sectionId = this.section;
+                const res = _.find(this.csys, function (o) {
                     return o.year_id === yearId && o.class_id === classId && o.section_id === sectionId;
                 });
                 return res.id;
@@ -173,7 +191,7 @@
         },
         watch: {
             csy: function () {
-                var url = '{{url("api/csyt")}}?csy=' + this.csy + '&token=';
+                let url = '{{url("api/csyt")}}?csy=' + this.csy + '&token=';
                 this.loadFrom(url, 'get', (resp) => {
                     app.existingTerms = resp.data;
                 });
@@ -200,6 +218,13 @@
                         default:
                             break;
                     }
+                });
+            },
+            createTerm: () => {
+                let url = '../api/term?term=' + app.newTerm + '&token=';
+                app.loadFrom(url, 'post', (resp) => {
+                    app.status = 'Term ' + app.newTerm + ' added successfully';
+                    app.terms.splice(app.terms.length, 0, resp.data);
                 });
             },
             addTerm: () => {

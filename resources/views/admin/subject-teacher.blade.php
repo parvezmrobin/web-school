@@ -14,104 +14,127 @@
 
 @section('content')
     <div class="row" id="vm" v-cloak xmlns:v-on="http://www.w3.org/1999/xhtml">
-        <div class="panel panel-info col-md-5">
-            <h2 class="panel-heading text-center">Select Scope</h2>
-            <div class="panel-body form-horizontal">
-                <div class="form-group">
-                    <label for="year" class="control-label col-sm-3">Year</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" id="year" v-model="year">
-                            <option v-for="year in years" :value="year.year_id">@{{year.year}}</option>
-                        </select>
+        <div class="row">
+            <div class="panel panel-info col-md-5">
+                <h2 class="panel-heading text-center">Select Scope</h2>
+                <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                        <label for="year" class="control-label col-sm-3">Year</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="year" v-model="year">
+                                <option v-for="year in years" :value="year.year_id">@{{year.year}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="class" class="control-label col-sm-3">Class</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="class" v-model="classs">
+                                <option v-for="cls in classes" :value="cls.class_id">@{{cls.classs}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="section" class="control-label col-sm-3">Section</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="section" v-model="section">
+                                <option v-for="section in sections"
+                                        :value="section.section_id">@{{section.section}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="class" class="control-label col-sm-3">Class</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" id="class" v-model="classs">
-                            <option v-for="cls in classes" :value="cls.class_id">@{{cls.classs}}</option>
-                        </select>
+            </div>
+            <div class="panel panel-info col-md-7">
+                <h2 class="panel-heading text-center">Summary</h2>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Subject</th>
+                                <th>Teacher</th>
+                                <th>Total Mark</th>
+                                <th>Compulsory</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="st in subjectTeachers">
+                                <td>@{{st.subject_code}}</td>
+                                <td>@{{st.subject}}</td>
+                                <td>@{{st.first_name + ' ' + st.last_name}}</td>
+                                <td>@{{st.mark}}</td>
+                                <td>@{{(st.is_compulsory)? 'True' : 'False'}}</td>
+                                <td>
+                                    <a class="btn btn-sm btn-danger" href="#" v-on:click="remove(st.id)">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="section" class="control-label col-sm-3">Section</label>
-                    <div class="col-sm-9">
-                        <select class="form-control" id="section" v-model="section">
-                            <option v-for="section in sections"
-                                    :value="section.section_id">@{{section.section}}</option>
-                        </select>
+            <div class="panel panel-primary col-md-8 col-md-offset-2">
+                <h2 class="panel-heading text-center">Assign Subject Teacher</h2>
+                <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                        <label for="teacher" class="control-label col-sm-4">Select Teacher</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="teacher" v-model="teacher">
+                                <option v-for="teacher in teachers"
+                                        :value="teacher.id">@{{teacher.first_name + ' ' + teacher.last_name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject" class="control-label col-sm-4">Select Subject</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="subject" v-model="subject">
+                                <option v-for="subject in subjects"
+                                        :value="subject.id">@{{subject.subject_code + ' - ' + subject.subject + ' (' + subject.mark + ')'}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <button type="button" class="btn btn-primary" v-on:click="assignSubject">
+                                Assign
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="panel panel-info col-md-7">
-            <h2 class="panel-heading text-center">Summary</h2>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Subject</th>
-                            <th>Teacher</th>
-                            <th>Total Mark</th>
-                            <th>Compulsory</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="st in subjectTeachers">
-                            <td>@{{st.subject_code}}</td>
-                            <td>@{{st.subject}}</td>
-                            <td>@{{st.first_name + ' ' + st.last_name}}</td>
-                            <td>@{{st.mark}}</td>
-                            <td>@{{(st.is_compulsory)? 'True' : 'False'}}</td>
-                            <td>
-                                <a class="btn btn-sm btn-danger" href="#" v-on:click="remove(st.id)">
-                                <span class="glyphicon glyphicon-remove"></span>
-                                </a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel panel-primary col-md-8 col-md-offset-2">
-            <h2 class="panel-heading text-center">Assign Subject Teacher</h2>
-            <div class="panel-body form-horizontal">
-                <div class="form-group">
-                    <label for="teacher" class="control-label col-sm-4">Select Teacher</label>
-                    <div class="col-sm-8">
-                        <select class="form-control" id="teacher" v-model="teacher">
-                            <option v-for="teacher in teachers"
-                                    :value="teacher.id">@{{teacher.first_name + ' ' + teacher.last_name}}</option>
-                        </select>
+        <hr>
+        <div class="row">
+            <h2 v-if="status.length" class="text-center">@{{ status }}</h2>
+            {{-- Subject Panel --}}
+            <div class="panel panel-warning col-md-8 col-md-offset-2">
+                <h2 class="panel-heading text-center">Create Subject</h2>
+                <div class="form-group panel-body">
+                    <div class="col-md-2">
+                        <input type="text" name="code" placeholder="Code" class="form-control" v-model="subjectCode">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="subject" class="control-label col-sm-4">Select Subject</label>
-                    <div class="col-sm-8">
-                        <select class="form-control" id="subject" v-model="subject">
-                            <option v-for="subject in subjects"
-                                    :value="subject.id">@{{subject.subject_code + ' - ' + subject.subject + ' (' + subject.mark + ')'}}</option>
-                        </select>
+                    <div class="col-md-4">
+                        <input type="text" name="subject" placeholder="Name" class="form-control" v-model="subjectName">
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-8 col-sm-offset-4">
-                        <button type="button" class="btn btn-primary" v-on:click="assignSubject">
-                        Assign
-                        </button>
+                    <div class="col-md-2">
+                        <input type="text" name="mark" placeholder="Mark" class="form-control" v-model="subjectMark">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" v-on:click="createSubject" class="btn btn-warning">Create</button>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
 @endsection
@@ -130,7 +153,11 @@
                 csys: [],
                 year: '',
                 classs: '',
-                section: ''
+                subjectCode: '',
+                subjectName: '',
+                subjectMark: '',
+                section: '',
+                status: ''
             },
             methods: {
                 loadFrom: (url, method, then) => {
@@ -147,6 +174,13 @@
                                 axios.delete(url).then(then);
                             }
                         });
+                },
+                createSubject: () => {
+                    var url = '../api/subject?subject=' + app.subjectName + '&code=' + app.subjectCode + '&mark=' + app.subjectMark + '&token=';
+                    app.loadFrom(url, 'post', (resp) => {
+                        app.status = 'Subject ' + app.subjectCode + ' - ' + app.subjectName + ' added successfully';
+                        app.subjects.splice(app.subjects.length, 0, resp.data);
+                    });
                 },
                 assignSubject: () => {
                     let url = '{{url("api/st")}}?teacher=' + app.teacher + '&subject=' + app.subject + '&csy=' + app.classSectionYear.id + '&token=';

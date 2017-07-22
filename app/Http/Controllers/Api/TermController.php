@@ -21,7 +21,6 @@ class TermController extends Controller
             $term = new Term;
             $term->term = $request->input('term');
             $term->save();
-            dd($term);
             return response()->json($term);
         }
         return response()->json(["status" => "Unauthorized"], 403);

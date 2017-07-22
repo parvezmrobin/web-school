@@ -193,7 +193,7 @@
                         app.status = 'Portion ' + app.portion + ' added successfully';
                         window.scrollTo(0, 0);
                     });
-                },
+                }
             }
         });
     </script>
