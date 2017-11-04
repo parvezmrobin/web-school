@@ -76,6 +76,8 @@ Route::get('common/tabulation', function ()
   return view('common.tabulation');
 });
 
+Route::get('common/tabulation2', 'Api\MarkController@tabulation2');
+
 Route::get('common/mark/update', function ()
 {
   return view('common.mark-update');

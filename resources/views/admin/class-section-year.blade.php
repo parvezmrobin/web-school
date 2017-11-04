@@ -112,12 +112,98 @@
         </div>
         <!--Addition Ends-->
 
+        <!--Edition Starts-->
+
+        <!--Editions Ends-->
+        <div class="panel panel-warning col-md-4">
+
+            <!--Update Year Starts-->
+            <h2 class="panel-heading">Update Year</h2>
+            <div class="form-horizontal panel-body">
+
+                <!--Select Year-->
+                <div class="form-group">
+                    <label for="year3" class="control-label col-md-4">Select Year</label>
+                    <div class="col-md-8">
+                        <select id="year3" v-model="year3" class="form-control">
+                            <option v-for="year in allYears" :value="year.id">@{{ year.year }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-8">
+                        <input type="number" name="year" placeholder="New Name" class="form-control" v-model="newYear">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" v-on:click="updateYear" class="btn btn-warning">Update</button>
+                    </div>
+                </div>
+            </div>
+            <!--Update Year Ends-->
+        </div>
+        <div class="panel panel-warning col-md-4">
+            <!--Update Class Starts-->
+            <h2 class="panel-heading">Update Class</h2>
+            <div class="form-horizontal panel-body">
+
+                <!--Select Class-->
+                <div class="form-group">
+                    <label for="year3" class="control-label col-md-4">Select Class</label>
+                    <div class="col-md-8">
+                        <select id="class3" v-model="class3" class="form-control">
+                            <option v-for="cls in allClasses" :value="cls.id">@{{ cls.class }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-8">
+                        <input type="text" placeholder="New Name" class="form-control" v-model="newClass">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" v-on:click="updateClass" class="btn btn-warning">Update</button>
+                    </div>
+                </div>
+            </div>
+            <!--Update Class Ends-->
+        </div>
+        <div class="panel panel-warning col-md-4">
+            <!--Update Section Starts-->
+            <h2 class="panel-heading">Update Section</h2>
+            <div class="form-horizontal panel-body">
+
+                <!--Select Section-->
+                <div class="form-group">
+                    <label for="section3" class="control-label col-md-5">Select Section</label>
+                    <div class="col-md-7">
+                        <select id="section3" v-model="section3" class="form-control">
+                            <option v-for="section in allSections" :value="section.id">
+                                @{{ section.section }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-8">
+                        <input type="text" placeholder="New Name" class="form-control" v-model="newSection">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" v-on:click="updateSection" class="btn btn-warning">Update</button>
+                    </div>
+                </div>
+            </div>
+            <!--Update Section Ends-->
+        </div>
+
+
         <!--Creation Starts-->
         <hr>
         <h2 v-if="status.length">@{{ status }}</h2>
 
         {{-- Year Panel --}}
-        <div class="panel panel-warning col-md-4">
+        <div class="panel panel-success col-md-4">
             <h2 class="panel-heading">Create Year</h2>
             <div class="form-group panel-body">
                 <div class="col-md-8">
@@ -130,7 +216,7 @@
         </div>
 
         {{-- Class Panel --}}
-        <div class="panel panel-warning col-md-4">
+        <div class="panel panel-success col-md-4">
             <h2 class="panel-heading">Create Class</h2>
             <div class="form-group panel-body">
                 <div class="col-md-8">
@@ -143,7 +229,7 @@
         </div>
 
         {{-- Section Panel --}}
-        <div class="panel panel-warning col-md-4">
+        <div class="panel panel-success col-md-4">
             <h2 class="panel-heading">Create Section</h2>
             <div class="form-group panel-body">
                 <div class="col-md-8">
@@ -176,7 +262,13 @@
                 year: '',
                 classs: '',
                 section: '',
-                status: ''
+                status: '',
+                year3: '',
+                class3: '',
+                section3: '',
+                newYear: '',
+                newClass: '',
+                newSection: ''
             },
             computed: {
                 years: function () {
@@ -272,6 +364,27 @@
                             });
                         }
                     }
+                },
+                updateYear: () => {
+                    let url = '../api/year/' + app.year3 + '?year=' + app.newYear + '&token=';
+                    app.loadFrom(url, 'put', (resp) => {
+                        const i = _.findIndex(app.allYears, (o) => {return o.id == app.year3;})
+                        app.allYears.splice(i, 1, resp.data);
+                    })
+                },
+                updateClass: () => {
+                    let url = '../api/class/' + app.class3 + '?class=' + app.newClass + '&token=';
+                    app.loadFrom(url, 'put', (resp) => {
+                        const i = _.findIndex(app.allClasses, (o) => {return o.id == app.class3;})
+                        app.allClasses.splice(i, 1, resp.data);
+                    })
+                },
+                updateSection: () => {
+                    let url = '../api/section/' + app.section3 + '?section=' + app.newSection + '&token=';
+                    app.loadFrom(url, 'put', (resp) => {
+                        const i = _.findIndex(app.allSections, (o) => {return o.id == app.section3;})
+                        app.allSections.splice(i, 1, resp.data);
+                    })
                 }
             },
             mounted() {

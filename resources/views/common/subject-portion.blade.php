@@ -121,11 +121,39 @@
             <!--Add Portion Ends-->
         </div>
 
+        <!--Update Portion Starts-->
+        <div class="row">
+            {{-- Update Portion Panel --}}
+            <div class="panel panel-warning col-md-8 col-md-offset-2">
+                <h2 class="panel-heading">Update Subject Portion</h2>
+                <div class="form-horizontal panel-body">
+                    <div class="form-group">
+                        <label for="portion2" class="control-label col-sm-4">Select Portion</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="portion2" v-model="portion2">
+                                <option v-for="portion in portions" :value="portion.id">@{{portion.portion}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8">
+                            <input type="text" name="portion2" placeholder="New Subject Portion Name"
+                                   class="form-control" v-model="newPortion2">
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" v-on:click="updatePortion" class="btn btn-warning">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Update Portion Ends-->
+
         <!--Create Portion Starts-->
         <div class="row">
             <h2 class="text-center" v-if="status.length">@{{ status }}</h2>
             {{-- Portion Panel --}}
-            <div class="panel panel-warning col-md-8 col-md-offset-2">
+            <div class="panel panel-success col-md-8 col-md-offset-2">
                 <h2 class="panel-heading">Create Subject Portion</h2>
                 <div class="form-group panel-body">
                     <div class="col-md-8">
@@ -133,7 +161,7 @@
                                v-model="newPortion">
                     </div>
                     <div class="col-md-4">
-                        <button type="button" v-on:click="createPortion" class="btn btn-warning">Create</button>
+                        <button type="button" v-on:click="createPortion" class="btn btn-success">Create</button>
                     </div>
                 </div>
             </div>
@@ -158,7 +186,9 @@
                 st: '',
                 error: '',
                 newPortion: '',
-                status: ''
+                status: '',
+                portion2: '',
+                newPortion2: ''
             },
             computed: {
                 years: function () {
@@ -286,6 +316,15 @@
                                     break;
                             }
                         });
+                },
+                updatePortion: () => {
+                    let url = '../api/portion/' + app.portion2 + '?portion=' + app.newPortion2 + '&token=';
+
+                    app.loadFrom(url, 'put', (resp) => {
+                        const i = _.findIndex(app.portions, (o) => {return o.id == app.portion2;})
+
+                        app.portions.splice(i, 1, resp.data);
+                    })
                 }
             },
             mounted () {

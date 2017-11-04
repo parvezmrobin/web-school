@@ -8,7 +8,7 @@ class ClassSectionYear extends Model
 {
     protected $table = 'class_section_year';
 
-    public function class(){
+    public function classs(){
         return $this->belongsTo('App\Classs');
     }
 
@@ -20,8 +20,8 @@ class ClassSectionYear extends Model
         return $this->belongsTo('App\Year');
     }
 
-    public function subjectTeacher(){
-        return $this->hasMany('App\SubjectTeacher');
+    public function subjectTeachers(){
+        return $this->hasMany(SubjectTeacher::class);
     }
 
     public function editors(){
@@ -32,4 +32,13 @@ class ClassSectionYear extends Model
         return $this->hasMany('App\AggregateImpose');
     }
 
+    public function classSectionYearTerms()
+    {
+        return $this->hasMany(ClassSectionYearTerm::class);
+    }
+
+    public function studentRolls()
+    {
+        return $this->hasMany(StudentRoll::class);
+    }
 }

@@ -81,6 +81,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row">
 
             <div class="panel panel-primary col-sm-8 col-sm-offset-2">
@@ -107,11 +108,42 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <hr>
+            {{-- Update Term Panel --}}
+            <div class="panel panel-warning col-sm-8 col-sm-offset-2">
+                <h2 class="panel-heading">Update Term</h2>
+                <div class="panel-body form-horizontal">
+                    <!--Select Term-->
+                    <div class="form-group">
+                        <label for="term" class="control-label col-sm-2">Term</label>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="term" v-model="term2">
+                                <option v-for="term in terms" :value="term.id">@{{term.term}}</option>
+                            </select>
+                        </div>
+                        <!--Set The New Value-->
+                        <div class="col-sm-5">
+                            <input type="text" name="newTerm2" placeholder="New Name" class="form-control" v-model="newTerm2">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <button type="button" v-on:click="updateTerm" class="btn btn-warning">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <hr>
             <h2 v-if="status.length">@{{ status }}</h2>
-            {{-- Term Panel --}}
-            <div class="panel panel-warning col-sm-8 col-sm-offset-2">
+            {{-- Create Term Panel --}}
+            <div class="panel panel-success col-sm-8 col-sm-offset-2">
                 <h2 class="panel-heading">Create Term</h2>
                 <div class="form-group panel-body">
                     <div class="col-md-8">
@@ -141,7 +173,9 @@
             term: '',
             newTerm: '',
             percentage: '',
-            status: ''
+            status: '',
+            term2: '',
+            newTerm2: ''
         },
         computed: {
             years: function () {
@@ -247,6 +281,14 @@
                     var i = _.findIndex(app.existingTerms, (o) => { return o.id === id; });
                     app.existingTerms.splice(i, 1);
                 });
+            },
+            updateTerm: () => {
+                let url = '../api/term/' + app.term2 + '?term=' + app.newTerm2 + '&token=';
+
+                app.loadFrom(url, 'put', (resp) => {
+                    const i = _.findIndex(app.terms, (o) => {return o.id == app.term2;});
+                    app.terms.splice(i, 1, resp.data);
+                })
             }
         },
         mounted () {

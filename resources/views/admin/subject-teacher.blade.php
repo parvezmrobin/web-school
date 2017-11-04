@@ -2,6 +2,17 @@
 
 @section('style')
     <style media="screen">
+        .form-control, .btn, .panel {
+            border-radius: 2px;
+        }
+
+        .panel-heading {
+            border-radius: 1px 1px 5px 5px;
+        }
+
+        h2 {
+            margin-top: 0px;
+        }
         .panel {
             border: none;
         }
@@ -114,10 +125,49 @@
             </div>
         </div>
         <hr>
+
+        <div class="row">
+            {{-- Update Subject Panel --}}
+            <div class="panel panel-warning col-md-8 col-md-offset-2 form-horizontal">
+                <h2 class="panel-heading text-center">Update Subject</h2>
+
+                <!--Select Subject For Update-->
+                <div class="form-group">
+                    <label for="subject2" class="control-label col-sm-4">Select Subject</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="subject2" v-model="subject2">
+                            <option v-for="subject in subjects"
+                                    :value="subject.id">
+                                @{{subject.subject_code + ' - ' + subject.subject + ' (' + subject.mark + ')'}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Set The New Values-->
+                <div class="form-group panel-body">
+                    <div class="col-md-2">
+                        <input type="text" placeholder="Code" class="form-control" v-model="subjectCode2">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" placeholder="Name" class="form-control" v-model="subjectName2">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" placeholder="Mark" class="form-control" v-model="subjectMark2">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" v-on:click="updateSubject" class="btn btn-warning">Update</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <hr>
+
         <div class="row">
             <h2 v-if="status.length" class="text-center">@{{ status }}</h2>
-            {{-- Subject Panel --}}
-            <div class="panel panel-warning col-md-8 col-md-offset-2">
+            {{-- Create Subject Panel --}}
+            <div class="panel panel-success col-md-8 col-md-offset-2">
                 <h2 class="panel-heading text-center">Create Subject</h2>
                 <div class="form-group panel-body">
                     <div class="col-md-2">
@@ -130,7 +180,7 @@
                         <input type="text" name="mark" placeholder="Mark" class="form-control" v-model="subjectMark">
                     </div>
                     <div class="col-md-4">
-                        <button type="button" v-on:click="createSubject" class="btn btn-warning">Create</button>
+                        <button type="button" v-on:click="createSubject" class="btn btn-success">Create</button>
                     </div>
                 </div>
             </div>
@@ -157,7 +207,11 @@
                 subjectName: '',
                 subjectMark: '',
                 section: '',
-                status: ''
+                status: '',
+                subject2: '',
+                subjectCode2: '',
+                subjectMark2: '',
+                subjectName2: '',
             },
             methods: {
                 loadFrom: (url, method, then) => {
@@ -221,6 +275,15 @@
 
                         app.subjectTeachers.splice(i, 1);
                     });
+                },
+                updateSubject: () => {
+                    let url = '../api/subject/' + app.subject2 + '?subject=' + app.subjectName2 +
+                        '&code=' + app.subjectCode2 + '&mark=' + app.subjectMark2 + '&token=';
+
+                    app.loadFrom(url, 'put', (resp) => {
+                        const i = _.findIndex(app.subjects, (o) => {return o.id == app.subject2;});
+                        app.subjects.splice(i, 1, resp.data);
+                    })
                 }
             },
             watch: {
@@ -232,6 +295,12 @@
                 },
                 section: () => {
                     app.loadClassSectionYear();
+                },
+                subject2: () => {
+                    const i = _.findIndex(app.subjects, (o) => {return o.id == app.subject2;})
+                    app.subjectName2 = app.subjects[i].subject;
+                    app.subjectCode2 = app.subjects[i].subject_code;
+                    app.subjectMark2 = app.subjects[i].mark;
                 }
             },
             computed: {

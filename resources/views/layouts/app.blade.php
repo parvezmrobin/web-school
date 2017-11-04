@@ -61,6 +61,7 @@
                                 <li><a href="{{url('common/mark/update')}}">Mark Update</a></li>
 
                                 @if(Auth::user()->isInRole(['admin']))
+                                    <li><a href="{{url('admin/class')}}">Class-Section</a></li>
                                     <li><a href="{{url('admin/subject-teacher')}}">Subject-Teacher</a></li>
                                     <li><a href="{{url('admin/term')}}">Term</a></li>
                                     <li><a href="{{url('admin/create')}}">Create</a></li>

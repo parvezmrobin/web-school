@@ -9,7 +9,7 @@ class StudentRoll extends Model
     protected $table = 'student_roll';
 
     public function student(){
-        return $this->belongsTo('App\Student');
+        return $this->belongsTo(Student::class);
     }
 
     public function classSectionYear(){
@@ -26,5 +26,10 @@ class StudentRoll extends Model
 
     public function individualTransactions(){
         return $this->hasMany('App\IndividualTransaction');
+    }
+
+    public function subjectTeacherStudents()
+    {
+        return $this->hasMany(SubjectTeacherStudent::class);
     }
 }
